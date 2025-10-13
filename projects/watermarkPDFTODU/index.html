@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>PDF Watermark Tool Online</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<style>
+  body { font-family: sans-serif; background: #f7f8fa; text-align: center; margin: 20px; }
+  canvas { border: 1px solid #ccc; margin-top: 10px; cursor: crosshair; }
+  #controls { margin-bottom: 10px; }
+  #watermark-img { position: absolute; cursor: move; max-width: 400px; opacity: 0.7; }
+  #canvas-container { position: relative; display: inline-block; }
+  button { margin-top: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 6px; background: #4a90e2; color: white; cursor: pointer; }
+  button:hover { background: #357ab8; }
+  .slider-container { width: 400px; margin: 15px auto; text-align: left; }
+  label { font-size: 14px; display: block; margin-bottom: 4px; }
+  input[type=range] { width: 100%; }
+</style>
+</head>
+<body>
+<h2>Add Watermark to Your PDF | Got a new idea? Let us know on the GitHub repository OTODU @anugrahbodi</h2>
+
+<div id="controls">
+  <input type="file" id="pdf-upload" accept="application/pdf">
+  <input type="file" id="img-upload" accept="image/*">
+</div>
+
+<div id="canvas-container">
+  <canvas id="pdf-canvas"></canvas>
+  <img id="watermark-img" style="display:none;">
+</div>
+
+<div class="slider-container" id="sliders" style="display:none;">
+  <label>Scale: <span id="scale-val">100</span>%</label>
+  <input type="range" id="scale-slider" min="1" max="99999" value="100">
+
+  <label>Opacity: <span id="opacity-val">70</span>%</label>
+  <input type="range" id="opacity-slider" min="0" max="100" value="70">
+</div>
+
+<button id="download-btn" style="display:none;">💾 Apply to All & Download PDF</button>
+
+<script>
+const pdfjsLib = window['pdfjs-dist/build/pdf']
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js'
+
+let pdfDoc = null
+let currentPage = 1
+let pdfCanvas = document.getElementById('pdf-canvas')
+let ctx = pdfCanvas.getContext('2d')
+let watermark = document.getElementById('watermark-img')
+let watermarkPos = { x: 100, y: 100 }
+let pdfArrayBuffer = null
+let imgDataUrl = null
+let scalePercent = 100
+let opacityPercent = 70
+
+document.getElementById('pdf-upload').addEventListener('change', async (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  pdfArrayBuffer = await file.arrayBuffer()
+  pdfDoc = await pdfjsLib.getDocument({data: pdfArrayBuffer}).promise
+  const page = await pdfDoc.getPage(currentPage)
+  const viewport = page.getViewport({scale: 1.2})
+  pdfCanvas.width = viewport.width
+  pdfCanvas.height = viewport.height
+
+  const renderContext = { canvasContext: ctx, viewport: viewport }
+  await page.render(renderContext).promise
+})
+
+document.getElementById('img-upload').addEventListener('change', (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    imgDataUrl = reader.result
+    watermark.src = imgDataUrl
+    watermark.style.display = 'block'
+    watermark.style.left = watermarkPos.x + 'px'
+    watermark.style.top = watermarkPos.y + 'px'
+    document.getElementById('download-btn').style.display = 'inline-block'
+    document.getElementById('sliders').style.display = 'block'
+  }
+  reader.readAsDataURL(file)
+});
+
+// Drag watermark
+let dragging = false
+let offset = {x:0, y:0}
+watermark.addEventListener('mousedown', (e) => {
+  dragging = true
+  offset.x = e.offsetX
+  offset.y = e.offsetY
+});
+document.addEventListener('mouseup', () => dragging = false);
+document.addEventListener('mousemove', (e) => {
+  if (dragging) {
+    const rect = pdfCanvas.getBoundingClientRect()
+    let x = e.clientX - rect.left - offset.x
+    let y = e.clientY - rect.top - offset.y
+    watermark.style.left = x + 'px'
+    watermark.style.top = y + 'px'
+    watermarkPos = {x, y}
+  }
+})
+
+// Scale slider
+document.getElementById('scale-slider').addEventListener('input', (e) => {
+  scalePercent = parseInt(e.target.value)
+  document.getElementById('scale-val').textContent = scalePercent
+  watermark.style.transform = `scale(${scalePercent/100})`
+})
+
+// Opacity slider
+document.getElementById('opacity-slider').addEventListener('input', (e) => {
+  opacityPercent = parseInt(e.target.value)
+  document.getElementById('opacity-val').textContent = opacityPercent
+  watermark.style.opacity = opacityPercent / 100
+})
+
+// Apply watermark
+document.getElementById('download-btn').addEventListener('click', async () => {
+  if (!pdfArrayBuffer || !imgDataUrl) return
+  const { PDFDocument } = PDFLib
+  const pdfDoc = await PDFDocument.load(pdfArrayBuffer)
+  const pngImage = await pdfDoc.embedPng(imgDataUrl)
+
+  const firstPage = pdfDoc.getPage(0)
+  const scaleFactor = firstPage.getWidth() / pdfCanvas.width
+  const xPos = watermarkPos.x * scaleFactor
+  const yPos = (pdfCanvas.height - watermarkPos.y - watermark.height * (scalePercent/100)) * scaleFactor
+
+  pdfDoc.getPages().forEach(page => {
+    page.drawImage(pngImage, {
+      x: xPos,
+      y: yPos,
+      width: watermark.width * (scalePercent/100) * scaleFactor,
+      height: watermark.height * (scalePercent/100) * scaleFactor,
+      opacity: opacityPercent / 100
+    })
+  })
+
+  const pdfBytes = await pdfDoc.save()
+  const blob = new Blob([pdfBytes], {type: 'application/pdf'})
+  const link = document.createElement('a')
+  link.href = URL.createObjectURL(blob)
+  link.download = 'watermarked.pdf'
+  link.click()
+});
+</script>
+</body>
+</html>
