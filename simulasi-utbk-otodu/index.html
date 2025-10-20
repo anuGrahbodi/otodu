@@ -19,10 +19,15 @@ button{background:linear-gradient(90deg,#4f9ef8,#3bd08a);border:none;color:#0120
 
 <script>
 const ENDPOINT = "https://otodu-api.anugrahbodi.workers.dev/";
+const API_KEY = "OTODU_SECRET_2025";
 
 async function loadQuestions() {
   try {
-    const res = await fetch(`${ENDPOINT}?action=questions`);
+    const res = await fetch(`${ENDPOINT}?action=questions`, {
+    headers: {
+      "x-api-key": API_KEY
+    }
+    });
     const data = await res.json();
     const qDiv = document.getElementById("questions");
     qDiv.innerHTML = "";
