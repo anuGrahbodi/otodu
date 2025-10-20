@@ -21,16 +21,15 @@ button{background:linear-gradient(90deg,#4f9ef8,#3bd08a);border:none;color:#0120
 const ENDPOINT = "https://otodu-api.anugrahbodi.workers.dev/";
 const API_KEY = "OTODU_SECRET_2025";
 
+// === AMBIL SOAL ===
 async function loadQuestions() {
   try {
-    const res = await fetch(ENDPOINT, {
-    method: "POST",
-    mode: "cors",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": API_KEY // ⬅️ Tambahkan ini
-      },
-      body: JSON.stringify(payload)
+    const res = await fetch(`${ENDPOINT}?action=questions`, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "x-api-key": API_KEY
+      }
     });
     const data = await res.json();
     const qDiv = document.getElementById("questions");
@@ -48,11 +47,12 @@ async function loadQuestions() {
       qDiv.innerHTML += `</p>`;
     }
   } catch (err) {
-    document.getElementById("questions").innerHTML = "Gagal memuat soal 😞";
+    document.getElementById("questions").innerHTML = "❌ Gagal memuat soal";
     console.error(err);
   }
 }
 
+// === KIRIM JAWABAN ===
 async function submitAnswers() {
   const answers = {};
   document.querySelectorAll("textarea").forEach(t => answers[t.id] = t.value);
@@ -68,11 +68,13 @@ async function submitAnswers() {
     const res = await fetch(ENDPOINT, {
       method: "POST",
       mode: "cors",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+      },
       body: JSON.stringify(payload)
     });
-    let data = {};
-    try { data = await res.json(); } catch { data = { status: "ok" }; }
+    const data = await res.json();
 
     if (data.status === "ok") {
       document.getElementById("status").innerHTML = "<b style='color:#3bd08a'>✅ Jawaban berhasil disimpan!</b>";
@@ -88,5 +90,6 @@ async function submitAnswers() {
 document.getElementById("submitBtn").onclick = submitAnswers;
 loadQuestions();
 </script>
+
 </body>
 </html>
