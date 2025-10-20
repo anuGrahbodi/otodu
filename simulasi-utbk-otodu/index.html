@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kuis Firebase + Apps Script</title>
+<style>
+body{font-family:Arial;background:#0b1220;color:#e7f2ff;padding:20px;}
+.box{background:#101b2e;padding:20px;border-radius:8px;max-width:600px;margin:auto;}
+button{background:linear-gradient(90deg,#4f9ef8,#3bd08a);border:none;color:#01202b;padding:10px 20px;margin-top:10px;border-radius:6px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>Kuis Firebase + Apps Script</h2>
+  <div id="questions">Memuat soal...</div>
+  <button id="submitBtn">Kirim Jawaban</button>
+  <div id="status"></div>
+</div>
+
+<script>
+const ENDPOINT = "https://otodu-api.anugrahbodi.workers.dev/";
+
+async function loadQuestions() {
+  try {
+    const res = await fetch(`${ENDPOINT}?action=questions`);
+    const data = await res.json();
+    const qDiv = document.getElementById("questions");
+    qDiv.innerHTML = "";
+    for (const key in data.questions) {
+      const q = data.questions[key];
+      qDiv.innerHTML += `<p><b>${q.question}</b><br>`;
+      if (q.type === "mcq") {
+        q.options.forEach(opt => {
+          qDiv.innerHTML += `<label><input type='radio' name='${q.id}' value='${opt}'> ${opt}</label><br>`;
+        });
+      } else {
+        qDiv.innerHTML += `<textarea id='${q.id}' rows='2' placeholder='Jawaban'></textarea>`;
+      }
+      qDiv.innerHTML += `</p>`;
+    }
+  } catch (err) {
+    document.getElementById("questions").innerHTML = "Gagal memuat soal 😞";
+    console.error(err);
+  }
+}
+
+async function submitAnswers() {
+  const answers = {};
+  document.querySelectorAll("textarea").forEach(t => answers[t.id] = t.value);
+  document.querySelectorAll("input[type=radio]:checked").forEach(r => answers[r.name] = r.value);
+
+  const payload = {
+    name: "Anugrah",
+    answers,
+    score: Object.keys(answers).length
+  };
+
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    let data = {};
+    try { data = await res.json(); } catch { data = { status: "ok" }; }
+
+    if (data.status === "ok") {
+      document.getElementById("status").innerHTML = "<b style='color:#3bd08a'>✅ Jawaban berhasil disimpan!</b>";
+    } else {
+      document.getElementById("status").innerHTML = "<b style='color:#ff8080'>Gagal: " + (data.message || "tidak diketahui") + "</b>";
+    }
+  } catch (err) {
+    document.getElementById("status").innerHTML = "<b style='color:#ff8080'>Gagal kirim data ke server!</b>";
+    console.error(err);
+  }
+}
+
+document.getElementById("submitBtn").onclick = submitAnswers;
+loadQuestions();
+</script>
+</body>
+</html>
