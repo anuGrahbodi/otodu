@@ -1,0 +1,156 @@
+[
+  {
+    "id": "MAT001", "subject": "MATBAS", "difficulty": 1, "dinaSlip": 0.1, "dinaGuess": 0.25,
+    "stimulus": null,
+    "question": "Jika 3x + 7 = 22, berapakah nilai x?",
+    "options": ["A. 4", "B. 5", "C. 6", "D. 7", "E. 8"],
+    "answer": "B",
+    "explanation": "3x + 7 = 22 → 3x = 15 → x = 5. Jawaban B.",
+    "distractorAnalysis": { "A": "x=4: 3(4)+7=19≠22.", "C": "x=6: 3(6)+7=25≠22.", "D": "Tertukar nilai x dan konstanta.", "E": "Salah operasi dasar." },
+    "communityStats": { "correctRate": 0.88, "ontimeRate": 0.72 },
+    "tags": ["aljabar", "persamaan-linear"]
+  },
+  {
+    "id": "MAT002", "subject": "MATBAS", "difficulty": 2, "dinaSlip": 0.12, "dinaGuess": 0.2,
+    "stimulus": null,
+    "question": "Sebuah persegi panjang panjang = (2x+3) cm, lebar = (x+1) cm, keliling 38 cm. Berapa nilai x?",
+    "options": ["A. x = 4", "B. x = 5", "C. x = 6", "D. x = 7", "E. x = 8"],
+    "answer": "B",
+    "explanation": "2(2x+3+x+1)=38 → 2(3x+4)=38 → 3x+4=19 → x=5. Jawaban B.",
+    "distractorAnalysis": { "A": "Keliling dengan x=4: 2(11+5)=32≠38.", "C": "Keliling dengan x=6: 2(15+7)=44≠38.", "D": "Kesalahan faktor 2.", "E": "Tidak menyederhanakan suku sejenis." },
+    "communityStats": { "correctRate": 0.61, "ontimeRate": 0.44 },
+    "tags": ["geometri", "persamaan-linear"]
+  },
+  {
+    "id": "MAT003", "subject": "MATBAS", "difficulty": 3, "dinaSlip": 0.08, "dinaGuess": 0.2,
+    "stimulus": null,
+    "question": "Jika log₂(x) + log₂(x−2) = 3, maka nilai x adalah…",
+    "options": ["A. 2", "B. 3", "C. 4", "D. 6", "E. 8"],
+    "answer": "C",
+    "explanation": "log₂(x(x−2))=3 → x(x−2)=8 → x²−2x−8=0 → (x−4)(x+2)=0 → x=4. Jawaban C.",
+    "distractorAnalysis": { "A": "x=2 → log₂(0) tak terdefinisi.", "B": "x=3: log₂(3)+log₂(1)≈1.58≠3.", "D": "x=6: log₂(24)≈4.58≠3.", "E": "x=8: log₂(8)+log₂(6)≈5.58≠3." },
+    "communityStats": { "correctRate": 0.43, "ontimeRate": 0.28 },
+    "tags": ["logaritma", "persamaan"]
+  },
+  {
+    "id": "PU001", "subject": "LINGPM", "difficulty": 1, "dinaSlip": 0.05, "dinaGuess": 0.25,
+    "stimulus": "Semua atlet adalah orang yang disiplin. Budi adalah seorang atlet.",
+    "question": "Manakah kesimpulan yang PASTI benar?",
+    "options": ["A. Budi tidak disiplin", "B. Budi adalah orang disiplin", "C. Semua orang disiplin adalah atlet", "D. Ada atlet yang tidak disiplin", "E. Budi mungkin bukan atlet"],
+    "answer": "B",
+    "explanation": "Silogisme: Semua atlet → disiplin. Budi → atlet. ∴ Budi → disiplin. Jawaban B.",
+    "distractorAnalysis": { "A": "Kontradiksi premis.", "C": "Konversi ilegal dari P1.", "D": "Kontradiksi 'semua atlet disiplin'.", "E": "Bertentangan P2." },
+    "communityStats": { "correctRate": 0.91, "ontimeRate": 0.85 },
+    "tags": ["silogisme", "deduktif"]
+  },
+  {
+    "id": "PU002", "subject": "LINGPM", "difficulty": 2, "dinaSlip": 0.1, "dinaGuess": 0.2,
+    "stimulus": "Pola bilangan: 2, 4, 8, 16, 32, …",
+    "question": "Bilangan selanjutnya adalah…",
+    "options": ["A. 48", "B. 56", "C. 60", "D. 64", "E. 72"],
+    "answer": "D",
+    "explanation": "Pola geometri rasio 2. 32×2=64. Jawaban D.",
+    "distractorAnalysis": { "A": "Mengira pola tambah 16.", "B": "Tidak ada pola yang menghasilkan 56.", "C": "Pola aritmatika salah.", "E": "Pembulatan tidak tepat." },
+    "communityStats": { "correctRate": 0.82, "ontimeRate": 0.76 },
+    "tags": ["deret-geometri", "pola-bilangan"]
+  },
+  {
+    "id": "PU003", "subject": "LINGPM", "difficulty": 3, "dinaSlip": 0.09, "dinaGuess": 0.2,
+    "stimulus": "Jika A>B, B>D, C<D, maka…",
+    "question": "Urutan dari terbesar ke terkecil adalah…",
+    "options": ["A. A B C D", "B. A B D C", "C. B A D C", "D. A D B C", "E. A B D C = A B C D"],
+    "answer": "B",
+    "explanation": "A>B>D>C. Urutan: A B D C. Jawaban B.",
+    "distractorAnalysis": { "A": "C dan D tertukar.", "C": "A dan B tertukar.", "D": "B dan D tertukar.", "E": "Kedua urutan berbeda." },
+    "communityStats": { "correctRate": 0.54, "ontimeRate": 0.38 },
+    "tags": ["penalaran-logis", "urutan"]
+  },
+  {
+    "id": "BIN001", "subject": "BINDON", "difficulty": 1, "dinaSlip": 0.07, "dinaGuess": 0.25,
+    "stimulus": null,
+    "question": "Kata 'mengintimidasi' berarti…",
+    "options": ["A. Memberi semangat", "B. Menakut-nakuti/mengancam", "C. Mengajak bekerja sama", "D. Membantu dalam kesulitan", "E. Membangkitkan rasa ingin tahu"],
+    "answer": "B",
+    "explanation": "'Intimidasi' = perbuatan menakut-nakuti/mengancam/memaksa. Jawaban B.",
+    "distractorAnalysis": { "A": "Ini makna 'memotivasi'.", "C": "Ini makna 'mengajak kolaborasi'.", "D": "Ini makna 'menolong'.", "E": "Ini makna 'membangkitkan rasa penasaran'." },
+    "communityStats": { "correctRate": 0.79, "ontimeRate": 0.68 },
+    "tags": ["kosakata", "makna-kata"]
+  },
+  {
+    "id": "BIN002", "subject": "BINDON", "difficulty": 2, "dinaSlip": 0.1, "dinaGuess": 0.2,
+    "stimulus": "Pangan lokal seperti singkong, ubi, dan jagung memiliki kandungan gizi yang tidak kalah dengan beras. Sayangnya, masyarakat masih menganggap pangan lokal sebagai makanan kelas bawah sehingga konsumsinya terus menurun.",
+    "question": "Apa ide pokok paragraf di atas?",
+    "options": ["A. Singkong, ubi, jagung bergizi", "B. Beras lebih bergizi dari pangan lokal", "C. Pangan lokal bergizi tapi dianggap rendah masyarakat", "D. Konsumsi pangan lokal terus meningkat", "E. Masyarakat harus berhenti makan beras"],
+    "answer": "C",
+    "explanation": "Ide pokok = gizi tinggi NAMUN dianggap kelas bawah → konsumsi turun. Jawaban C.",
+    "distractorAnalysis": { "A": "Hanya satu aspek.", "B": "Bertentangan ('tidak kalah').", "D": "Bertentangan ('terus menurun').", "E": "Tidak disebutkan." },
+    "communityStats": { "correctRate": 0.66, "ontimeRate": 0.55 },
+    "tags": ["ide-pokok", "pemahaman-bacaan"]
+  },
+  {
+    "id": "ENG001", "subject": "BINGEN", "difficulty": 1, "dinaSlip": 0.08, "dinaGuess": 0.25,
+    "stimulus": null,
+    "question": "Choose the grammatically correct sentence:",
+    "options": ["A. She go to school every day.", "B. She goes to school every day.", "C. She going to school every day.", "D. She have gone to school every day.", "E. She goed to school every day."],
+    "answer": "B",
+    "explanation": "Third person singular present → add -es. 'She goes' is correct. Answer B.",
+    "distractorAnalysis": { "A": "Missing -es for she/he/it.", "C": "Missing auxiliary 'is'.", "D": "Present perfect, wrong tense.", "E": "'Goed' is not a valid word." },
+    "communityStats": { "correctRate": 0.93, "ontimeRate": 0.89 },
+    "tags": ["grammar", "simple-present"]
+  },
+  {
+    "id": "ENG002", "subject": "BINGEN", "difficulty": 2, "dinaSlip": 0.1, "dinaGuess": 0.2,
+    "stimulus": "Despite the heavy rainfall, the annual marathon continued as planned. Thousands of participants, drenched to the bone, pushed through the 42km course.",
+    "question": "What does 'drenched' most nearly mean?",
+    "options": ["A. Exhausted", "B. Soaking wet", "C. Frightened", "D. Well-prepared", "E. Energized"],
+    "answer": "B",
+    "explanation": "'Drenched' = completely soaked/wet. Context: heavy rainfall + drenched to the bone. Answer B.",
+    "distractorAnalysis": { "A": "Exhausted = very tired.", "C": "Frightened = scared.", "D": "Well-prepared = the opposite.", "E": "Energized = positive energy." },
+    "communityStats": { "correctRate": 0.74, "ontimeRate": 0.62 },
+    "tags": ["vocabulary", "reading-comprehension"]
+  },
+  {
+    "id": "PPU001", "subject": "PPU", "difficulty": 2, "dinaSlip": 0.09, "dinaGuess": 0.2,
+    "stimulus": "Teknologi kecerdasan buatan (AI) berkembang pesat. AI kini mampu mendiagnosis penyakit, mengemudikan kendaraan, menciptakan karya seni. Namun, kekhawatiran muncul terkait dampaknya terhadap lapangan kerja.",
+    "question": "Apa paradoks perkembangan AI dalam teks?",
+    "options": ["A. AI membuat pekerjaan efisien", "B. AI canggih tapi tidak berguna", "C. AI membawa kemajuan sekaligus ancaman lapangan kerja", "D. AI hanya untuk seni", "E. AI lebih berbahaya dari bermanfaat"],
+    "answer": "C",
+    "explanation": "Paradoks: kemajuan AI + ancaman lapangan kerja. Jawaban C.",
+    "distractorAnalysis": { "A": "Hanya satu sisi positif.", "B": "Bertentangan dengan isi teks.", "D": "Seni hanya salah satu contoh.", "E": "Terlalu ekstrem, tidak dinyatakan teks." },
+    "communityStats": { "correctRate": 0.58, "ontimeRate": 0.47 },
+    "tags": ["analisis-teks", "pemahaman-bacaan"]
+  },
+  {
+    "id": "PBM001", "subject": "PBM", "difficulty": 2, "dinaSlip": 0.1, "dinaGuess": 0.2,
+    "stimulus": null,
+    "question": "Sebuah toko memberi diskon 20% untuk tas harga Rp450.000. Harga setelah diskon?",
+    "options": ["A. Rp340.000", "B. Rp350.000", "C. Rp360.000", "D. Rp370.000", "E. Rp380.000"],
+    "answer": "C",
+    "explanation": "Diskon = 20%×450.000 = 90.000. Harga = 450.000−90.000 = Rp360.000. Jawaban C.",
+    "distractorAnalysis": { "A": "Diskon dihitung tidak tepat.", "B": "Pengurangan keliru.", "D": "Diskon terlalu kecil.", "E": "Diskon hanya Rp70.000, bukan 20%." },
+    "communityStats": { "correctRate": 0.77, "ontimeRate": 0.65 },
+    "tags": ["aritmatika", "persentase"]
+  },
+  {
+    "id": "MAT004", "subject": "MATBAS", "difficulty": 2, "dinaSlip": 0.1, "dinaGuess": 0.2,
+    "stimulus": null,
+    "question": "Hasil dari ³√216 adalah…",
+    "options": ["A. 4", "B. 5", "C. 6", "D. 7", "E. 8"],
+    "answer": "C",
+    "explanation": "6³ = 216, sehingga ³√216 = 6. Jawaban C.",
+    "distractorAnalysis": { "A": "4³=64≠216.", "B": "5³=125≠216.", "D": "7³=343≠216.", "E": "8³=512≠216." },
+    "communityStats": { "correctRate": 0.80, "ontimeRate": 0.71 },
+    "tags": ["aritmatika", "pangkat-akar"]
+  },
+  {
+    "id": "PBM002", "subject": "PBM", "difficulty": 3, "dinaSlip": 0.08, "dinaGuess": 0.2,
+    "stimulus": null,
+    "question": "Jika rata-rata 5 bilangan adalah 12 dan satu bilangan dihapus menjadi 10, maka bilangan yang dihapus adalah…",
+    "options": ["A. 14", "B. 16", "C. 18", "D. 20", "E. 22"],
+    "answer": "D",
+    "explanation": "Total 5 bilangan = 60. Total 4 bilangan = 40. Bilangan dihapus = 60-40 = 20. Jawaban D.",
+    "distractorAnalysis": { "A": "Salah menghitung total.", "B": "Menggunakan rata-rata salah.", "C": "Keliru rumus rata-rata.", "E": "Mengabaikan jumlah bilangan." },
+    "communityStats": { "correctRate": 0.52, "ontimeRate": 0.40 },
+    "tags": ["statistika", "rata-rata"]
+  }
+]

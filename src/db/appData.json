@@ -1,0 +1,133 @@
+{
+  "siteSettings": {
+    "appName": "OTODUv3",
+    "tagline": "Platform Tryout UTBK Cerdas & Adaptif",
+    "utbkDate": "2026-05-24T00:00:00+07:00",
+    "adminPassword": "admin123",
+    "scoringMethod": "irt",
+    "proctorEnabled": true,
+    "registrationOpen": true,
+    "dailyTargetDefault": 25,
+    "soalPerMateriDefault": 5
+  },
+  "communityStats": {
+    "totalUsers": 348,
+    "totalQuestions": 15,
+    "totalSessionsAllTime": 1024,
+    "sessionsToday": 87,
+    "usersCompletedTargetToday": 63,
+    "soalDikerjakanJamIni": 142,
+    "avgScoreCommunity": 68,
+    "topSubjectStruggle": "Logaritma",
+    "topSubjectStruggleCorrectRate": 43,
+    "usersImprovedPUThisWeek": 120,
+    "topPerformerThreshold": 40
+  },
+  "tickerMessages": [
+    "🔥 {usersCompletedTargetToday} pejuang UTBK telah menyelesaikan targetnya hari ini",
+    "⚡ {soalDikerjakanJamIni} soal dikerjakan dalam 1 jam terakhir",
+    "🏆 Rata-rata skor komunitas: {avgScoreCommunity}% — Kamu bisa lebih tinggi!",
+    "📈 {usersImprovedPUThisWeek} siswa meningkatkan mastery Penalaran Umum minggu ini",
+    "🎯 Soal paling susah hari ini: {topSubjectStruggle} — hanya {topSubjectStruggleCorrectRate}% benar",
+    "💡 Top 10% pejuang sudah mengerjakan {topPerformerThreshold}+ soal hari ini"
+  ],
+  "tryoutPackages": [
+    {
+      "id": "TO-2026-01",
+      "name": "Tryout Akbar #1 2026",
+      "startDate": "2026-01-20",
+      "endDate": "2026-01-22",
+      "status": "selesai",
+      "participants": 210,
+      "subjects": ["MATBAS", "LINGPM", "BINDON", "BINGEN", "PPU", "PBM"],
+      "soalPerMateri": 10
+    },
+    {
+      "id": "TO-2026-02",
+      "name": "Tryout Akbar #2 2026",
+      "startDate": "2026-02-14",
+      "endDate": "2026-02-16",
+      "status": "selesai",
+      "participants": 285,
+      "subjects": ["MATBAS", "LINGPM", "BINDON", "BINGEN", "PPU", "PBM"],
+      "soalPerMateri": 10
+    },
+    {
+      "id": "TO-2026-03",
+      "name": "Tryout Akbar #3 2026",
+      "startDate": "2026-04-05",
+      "endDate": "2026-04-07",
+      "status": "draft",
+      "participants": 0,
+      "subjects": ["MATBAS", "LINGPM", "BINDON", "BINGEN", "PPU", "PBM"],
+      "soalPerMateri": 10
+    }
+  ],
+  "users": [
+    {
+      "id": "USR001",
+      "name": "Agus Setiawan",
+      "email": "agus@example.com",
+      "role": "siswa",
+      "subscription": "premium",
+      "lastLogin": "baru saja",
+      "joinDate": "2025-09-01"
+    },
+    {
+      "id": "USR002",
+      "name": "Budi Santoso",
+      "email": "budi@example.com",
+      "role": "siswa",
+      "subscription": "gratis",
+      "lastLogin": "2 jam yang lalu",
+      "joinDate": "2025-10-15"
+    },
+    {
+      "id": "USR003",
+      "name": "Citra Dewi",
+      "email": "citra@example.com",
+      "role": "siswa",
+      "subscription": "premium",
+      "lastLogin": "1 hari yang lalu",
+      "joinDate": "2025-08-20"
+    },
+    {
+      "id": "USR004",
+      "name": "Doni Pratama",
+      "email": "doni@example.com",
+      "role": "siswa",
+      "subscription": "gratis",
+      "lastLogin": "3 hari yang lalu",
+      "joinDate": "2025-11-01"
+    },
+    {
+      "id": "USR005",
+      "name": "Eka Rahayu",
+      "email": "eka@example.com",
+      "role": "editor",
+      "subscription": "premium",
+      "lastLogin": "5 menit yang lalu",
+      "joinDate": "2025-07-10"
+    }
+  ],
+  "activityLog": [
+    {
+      "id": "LOG001",
+      "type": "system",
+      "message": "Sistem OTODUv3 diinisialisasi dengan data awal.",
+      "timestamp": "2026-03-29T08:00:00Z"
+    },
+    {
+      "id": "LOG002",
+      "type": "content",
+      "message": "15 soal UTBK telah dimuat ke bank soal awal.",
+      "timestamp": "2026-03-29T10:30:00Z"
+    },
+    {
+      "id": "LOG003",
+      "type": "user",
+      "message": "5 pengguna awal terdaftar di sistem.",
+      "timestamp": "2026-03-29T12:00:00Z"
+    }
+  ]
+}
