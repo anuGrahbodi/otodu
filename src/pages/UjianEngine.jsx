@@ -2,12 +2,14 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import MetakognitifPopup from '../components/MetakognitifPopup';
+import QuestionInput from '../components/exam/QuestionInput';
 import { SUBJECTS } from '../data/questions';
+import { getQuestionTypeConfig, isAnswered } from '../data/questionTypes';
 
 export default function UjianEngine() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
-  const { activeDraft, saveAnswer, toggleRagu, updateElapsed, submitSession } = useStore();
+  const { activeDraft, saveAnswer, toggleRagu, updateElapsed, submitSession, updateTimeSpent } = useStore();
 
   const [currentIdx, setCurrentIdx] = useState(0);
   const [timeLeft, setTimeLeft] = useState(null);
@@ -15,6 +17,7 @@ export default function UjianEngine() {
   const [submittedSession, setSubmittedSession] = useState(null);
   const timerRef = useRef(null);
   const startRef = useRef(Date.now());
+  const questionEntryTimeRef = useRef(Date.now());
 
   const draft = activeDraft;
   const questions = draft?.questions ?? [];
@@ -51,8 +54,24 @@ export default function UjianEngine() {
 
   const handleForceSubmit = useCallback(() => {
     clearInterval(timerRef.current);
+    recordCurrentQuestionTime();
     setShowPopup(true);
   }, []);
+
+  const recordCurrentQuestionTime = () => {
+    if (!draft || !draft.questions || draft.questions.length === 0) return;
+    const currentQ = draft.questions[currentIdx];
+    const timeSpentMs = Date.now() - questionEntryTimeRef.current;
+    if (timeSpentMs > 500) { // Only record if spent more than 500ms
+      updateTimeSpent(currentQ.id, timeSpentMs);
+    }
+    questionEntryTimeRef.current = Date.now();
+  };
+
+  const navigateToQuestion = (newIdx) => {
+    recordCurrentQuestionTime();
+    setCurrentIdx(newIdx);
+  };
 
   const handleAnswer = (questionId, answer) => {
     saveAnswer(questionId, answer);
@@ -64,6 +83,7 @@ export default function UjianEngine() {
 
   const handleSubmit = () => {
     clearInterval(timerRef.current);
+    recordCurrentQuestionTime();
     setShowPopup(true);
   };
 
@@ -77,7 +97,8 @@ export default function UjianEngine() {
   if (!draft || questions.length === 0) return null;
 
   const q = questions[currentIdx];
-  const answered = Object.keys(answers).length;
+  const answered = questions.filter(sq => isAnswered(sq, answers[sq.id])).length;
+  const typeCfg = getQuestionTypeConfig(q.questionType);
   const formatTime = (s) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
@@ -163,6 +184,9 @@ export default function UjianEngine() {
               <span className={`badge ${q.difficulty === 1 ? 'badge-green' : q.difficulty === 2 ? 'badge-yellow' : 'badge-red'}`}>
                 {'⭐'.repeat(q.difficulty)} {q.difficulty === 1 ? 'Mudah' : q.difficulty === 2 ? 'Sedang' : 'Sulit'}
               </span>
+              <span className="badge badge-yellow" title={typeCfg.label}>
+                {typeCfg.icon} {typeCfg.shortLabel}
+              </span>
             </div>
             {q.stimulus ? (
               <>
@@ -203,8 +227,8 @@ export default function UjianEngine() {
               {questions.map((sq, i) => (
                 <div
                   key={sq.id}
-                  className={`nav-cell ${answers[sq.id] ? 'answered' : ''} ${ragu[sq.id] ? 'ragu' : ''} ${i === currentIdx ? 'current' : ''}`}
-                  onClick={() => setCurrentIdx(i)}
+                  className={`nav-cell ${isAnswered(sq, answers[sq.id]) ? 'answered' : ''} ${ragu[sq.id] ? 'ragu' : ''} ${i === currentIdx ? 'current' : ''}`}
+                  onClick={() => navigateToQuestion(i)}
                   title={`Soal ${i + 1}`}
                 >
                   {i + 1}
@@ -247,29 +271,18 @@ export default function UjianEngine() {
               </p>
             </div>
 
-            {/* Options */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {q.options.map((opt, oi) => {
-                const label = ['A', 'B', 'C', 'D', 'E'][oi];
-                const isSelected = answers[q.id] === label;
-                return (
-                  <div
-                    key={label}
-                    className={`soal-option ${isSelected ? 'selected' : ''}`}
-                    onClick={() => handleAnswer(q.id, label)}
-                  >
-                    <div className={`option-label ${isSelected ? 'selected' : ''}`}>{label}</div>
-                    <span style={{ fontSize: 14, lineHeight: 1.6 }}>{opt.slice(3)}</span>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Answer Input by Type */}
+            <QuestionInput
+              question={q}
+              userAnswer={answers[q.id]}
+              onChange={(val) => handleAnswer(q.id, val)}
+            />
 
             {/* Navigation Buttons */}
             <div className="flex justify-between items-center mt-28" style={{ marginTop: 28 }}>
               <button
                 className="btn btn-secondary"
-                onClick={() => setCurrentIdx(i => Math.max(0, i - 1))}
+                onClick={() => navigateToQuestion(Math.max(0, currentIdx - 1))}
                 disabled={currentIdx === 0}
               >
                 ← Sebelumnya
@@ -286,7 +299,7 @@ export default function UjianEngine() {
               {currentIdx < questions.length - 1 ? (
                 <button
                   className="btn btn-primary"
-                  onClick={() => setCurrentIdx(i => i + 1)}
+                  onClick={() => navigateToQuestion(currentIdx + 1)}
                 >
                   Selanjutnya →
                 </button>

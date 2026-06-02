@@ -1,9 +1,4 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  ResponsiveContainer, Tooltip,
-} from 'recharts';
 import { useStore } from '../store/useStore';
 import { SUBJECTS } from '../data/questions';
 
@@ -19,14 +14,6 @@ function formatTime(ms) {
 export default function Statistik() {
   const navigate = useNavigate();
   const { mastery, sessions } = useStore();
-  const [activeTab, setActiveTab] = useState('overview');
-
-  const radarData = Object.entries(SUBJECTS).map(([key, s]) => ({
-    subject: s.label.split(' ').slice(0, 2).join(' '),
-    mastery: Math.round((mastery[key] ?? 0.5) * 100),
-    fullMark: 100,
-    icon: s.icon,
-  }));
 
   const avgScore = sessions.length
     ? Math.round(sessions.reduce((s, ses) => s + ses.skillScore, 0) / sessions.length)
@@ -64,175 +51,9 @@ export default function Statistik() {
           ))}
         </div>
 
-        {/* TABS */}
-        <div className="tabs mb-20">
-          {[
-            { key: 'overview', label: '📡 Radar Diagnostik' },
-            { key: 'mastery',  label: '📈 Detail Mastery' },
-            { key: 'history',  label: '📋 Riwayat Sesi' },
-          ].map(t => (
-            <button
-              key={t.key}
-              className={`tab-btn ${activeTab === t.key ? 'active' : ''}`}
-              onClick={() => setActiveTab(t.key)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* TAB: RADAR */}
-        {activeTab === 'overview' && (
-          <div className="grid-2 grid gap-24" style={{ alignItems: 'start' }}>
-            <div className="card">
-              <h2 className="title-sm mb-16">🕸 Peta Kemampuan DINA</h2>
-              <div className="radar-wrap" style={{ height: 340 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
-                    <PolarGrid stroke="var(--sky-200)" />
-                    <PolarAngleAxis
-                      dataKey="subject"
-                      tick={{ fontSize: 11, fill: 'var(--gray-600)', fontWeight: 600 }}
-                    />
-                    <PolarRadiusAxis
-                      angle={90} domain={[0, 100]}
-                      tick={{ fontSize: 10, fill: 'var(--gray-400)' }}
-                    />
-                    <Radar
-                      name="Mastery"
-                      dataKey="mastery"
-                      stroke="var(--sky-500)"
-                      fill="var(--sky-400)"
-                      fillOpacity={0.3}
-                      strokeWidth={2}
-                      dot={{ fill: 'var(--sky-600)', r: 4 }}
-                    />
-                    <Tooltip
-                      formatter={(val) => [`${val}%`, 'Mastery']}
-                      contentStyle={{ fontSize: 12, borderRadius: 8 }}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className="card">
-              <h2 className="title-sm mb-16">🏹 Rekomendasi Belajar</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {Object.entries(mastery)
-                  .sort((a, b) => a[1] - b[1])
-                  .map(([key, val]) => {
-                    const pct = Math.round(val * 100);
-                    const s = SUBJECTS[key];
-                    const priority = pct < 50 ? 'high' : pct < 70 ? 'medium' : 'low';
-                    return (
-                      <div key={key} style={{
-                        padding: '12px 16px', borderRadius: 10,
-                        background: priority === 'high' ? 'var(--error-bg)' : priority === 'medium' ? 'var(--warning-bg)' : 'var(--success-bg)',
-                        border: `1.5px solid ${priority === 'high' ? '#fca5a5' : priority === 'medium' ? '#fde68a' : '#86efac'}`,
-                        display: 'flex', alignItems: 'center', gap: 12,
-                      }}>
-                        <span style={{ fontSize: 20 }}>{s.icon}</span>
-                        <div style={{ flex: 1 }}>
-                          <div className="flex justify-between">
-                            <p style={{ fontWeight: 600, fontSize: 13 }}>{s.label}</p>
-                            <span className={`badge ${priority === 'high' ? 'badge-red' : priority === 'medium' ? 'badge-yellow' : 'badge-green'}`}>
-                              {pct}%
-                            </span>
-                          </div>
-                          <p style={{ fontSize: 11, marginTop: 4, color: 'var(--text-muted)' }}>
-                            {priority === 'high' ? '🚨 Prioritas utama — latih segera!' : priority === 'medium' ? '⚠️ Butuh perhatian lebih' : '✅ Pertahankan performa ini'}
-                          </p>
-                          <div className="progress-wrap mt-8" style={{ height: 6 }}>
-                            <div
-                              className="progress-fill"
-                              style={{
-                                width: `${pct}%`,
-                                background: priority === 'high'
-                                  ? 'linear-gradient(90deg, #ef4444, #f97316)'
-                                  : priority === 'medium'
-                                    ? 'linear-gradient(90deg, #f59e0b, #eab308)'
-                                    : 'linear-gradient(90deg, #22c55e, #16a34a)',
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB: MASTERY DETAIL */}
-        {activeTab === 'mastery' && (
-          <div className="card">
-            <h2 className="title-sm mb-16">📈 Detail Mastery per Sub-Tes</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {Object.entries(SUBJECTS).map(([key, s]) => {
-                const pct = Math.round((mastery[key] ?? 0.5) * 100);
-                return (
-                  <div key={key}>
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center gap-10">
-                        <span style={{ fontSize: 22 }}>{s.icon}</span>
-                        <div>
-                          <p style={{ fontWeight: 700, fontSize: 14 }}>{s.label}</p>
-                          <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>Kode: {s.code}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-12">
-                        <div style={{
-                          width: 56, height: 56, borderRadius: '50%',
-                          background: `conic-gradient(${pct < 50 ? '#ef4444' : pct < 70 ? '#f59e0b' : '#22c55e'} ${pct * 3.6}deg, var(--sky-100) 0deg)`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          position: 'relative',
-                        }}>
-                          <div style={{
-                            width: 42, height: 42, background: 'white', borderRadius: '50%',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'absolute',
-                            fontWeight: 800, fontSize: 13,
-                            color: pct < 50 ? 'var(--error)' : pct < 70 ? 'var(--warning)' : 'var(--success)',
-                          }}>
-                            {pct}%
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="progress-wrap" style={{ height: 10 }}>
-                      <div
-                        className="progress-fill"
-                        style={{
-                          width: `${pct}%`,
-                          background: pct < 50
-                            ? 'linear-gradient(90deg, #ef4444, #f97316)'
-                            : pct < 70
-                              ? 'linear-gradient(90deg, #f59e0b, #eab308)'
-                              : 'linear-gradient(90deg, #22c55e, #16a34a)',
-                        }}
-                      />
-                    </div>
-                    <div className="flex justify-between mt-4">
-                      <span className="text-xs text-muted">0%</span>
-                      <span className="text-xs" style={{
-                        color: pct < 50 ? 'var(--error)' : pct < 70 ? 'var(--warning)' : 'var(--success)',
-                        fontWeight: 600,
-                      }}>
-                        {pct < 50 ? '🚨 Prioritas' : pct < 70 ? '⚠️ Perlu Latihan' : '✅ Bagus!'}
-                      </span>
-                      <span className="text-xs text-muted">100%</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* TAB: HISTORY */}
-        {activeTab === 'history' && (
-          <div>
+        <div className="card">
+          <h2 className="title-sm mb-16">📋 Riwayat Sesi Ujian</h2>
             {sessions.length === 0 ? (
               <div className="card" style={{ textAlign: 'center', padding: 48 }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
@@ -306,7 +127,6 @@ export default function Statistik() {
               </div>
             )}
           </div>
-        )}
 
       </div>
     </div>

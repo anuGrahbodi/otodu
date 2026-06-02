@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { SUBJECTS } from '../data/questions';
+import { checkAnswer, formatAnswerDisplay, formatUserAnswerDisplay } from '../data/questionTypes';
 
 const REASONS = [
   { key: 'tidak_tau',    emoji: '🤔', label: 'Beneran ga tau konsepnya sama sekali', sub: 'Penalti mastery besar' },
@@ -10,7 +11,7 @@ const REASONS = [
 ];
 
 export default function MetakognitifPopup({ questions, answers, onComplete }) {
-  const wrongQuestions = questions.filter(q => answers[q.id] !== q.answer);
+  const wrongQuestions = questions.filter(q => !checkAnswer(q, answers[q.id]));
   const [reasons, setReasons] = useState({});
   const [currentWrongIdx, setCurrentWrongIdx] = useState(0);
 
@@ -99,11 +100,11 @@ export default function MetakognitifPopup({ questions, answers, onComplete }) {
                 <div className="flex gap-16">
                   <p className="text-sm">
                     <span style={{ color: 'var(--error)' }}>❌ Jawabanmu:</span>{' '}
-                    <strong>{answers[currentWrong.id] ?? '(Tidak dijawab)'}</strong>
+                    <strong>{formatUserAnswerDisplay(currentWrong, answers[currentWrong.id])}</strong>
                   </p>
                   <p className="text-sm">
                     <span style={{ color: 'var(--success)' }}>✅ Kunci:</span>{' '}
-                    <strong>{currentWrong.answer}</strong>
+                    <strong>{formatAnswerDisplay(currentWrong)}</strong>
                   </p>
                 </div>
               </div>

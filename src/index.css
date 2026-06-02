@@ -192,6 +192,9 @@ ul { list-style: none; }
   position: relative;
   overflow: hidden;
 }
+.progress-fill-green {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
 .progress-fill::after {
   content: '';
   position: absolute;
@@ -432,6 +435,142 @@ input[type="range"]::-webkit-slider-thumb {
   font-weight: 900;
   line-height: 1;
   text-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* ─── DASHBOARD ──────────────────────────────────────────── */
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.dashboard-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.countdown-banner-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.countdown-banner-side {
+  flex: 1 1 220px;
+  max-width: 320px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+}
+.dashboard-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: center;
+}
+.dashboard-hero-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.dashboard-info-box {
+  background: var(--sky-50);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 768px) {
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .dashboard-hero-body {
+    width: 100%;
+    align-items: stretch;
+  }
+  .dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+  .countdown-banner-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .countdown-banner-side {
+    max-width: none;
+  }
+}
+
+/* ─── MODE TOOLTIP ───────────────────────────────────────── */
+.mode-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.mode-tooltip-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sky-700);
+  text-transform: capitalize;
+}
+.mode-tooltip-trigger {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sky-300);
+  background: var(--sky-50);
+  color: var(--sky-700);
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  line-height: 1;
+  padding: 0;
+}
+.mode-tooltip-popup {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 20;
+  width: min(280px, 70vw);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--gray-800);
+  color: white;
+  font-size: 12px;
+  line-height: 1.55;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: var(--transition);
+  pointer-events: none;
+}
+.mode-tooltip:hover .mode-tooltip-popup,
+.mode-tooltip:focus-within .mode-tooltip-popup {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.mode-tooltip-trigger:hover,
+.mode-tooltip-trigger:focus {
+  background: var(--sky-100);
+  border-color: var(--sky-500);
 }
 
 /* ─── TICKER ─────────────────────────────────────────────── */

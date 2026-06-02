@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { SUBJECTS } from '../data/questions';
+import { QUESTION_TYPES, SUBTESTS, getQuestionTypeConfig } from '../data/questionTypes';
+import QuestionForm from '../components/admin/QuestionForm';
 import {
   getQuestions, addQuestion, updateQuestion, deleteQuestion,
   getCommunityStats, saveCommunityStats,
@@ -27,7 +29,7 @@ function Modal({ title, onClose, children }) {
     }} onClick={onClose}>
       <div style={{
         background: 'var(--surface)', borderRadius: 14, padding: 28,
-        width: '100%', maxWidth: 680, maxHeight: '90vh', overflowY: 'auto',
+        width: '100%', maxWidth: 820, maxHeight: '90vh', overflowY: 'auto',
         boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
       }} onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-20">
@@ -153,107 +155,11 @@ function TabOverview() {
 }
 
 // ─── TAB: BANK SOAL ──────────────────────────────────────────────────────────
-const EMPTY_Q = {
-  id: '', subject: 'MATBAS', difficulty: 1, dinaSlip: 0.1, dinaGuess: 0.25,
-  stimulus: '', question: '',
-  options: ['A. ', 'B. ', 'C. ', 'D. ', 'E. '],
-  answer: 'A', explanation: '',
-  tags: [],
-  communityStats: { correctRate: 0.5, ontimeRate: 0.5 },
-  distractorAnalysis: {},
-};
-
-function QuestionForm({ initialData, onSave, onCancel }) {
-  const [q, setQ] = useState(initialData ? { ...initialData, options: [...initialData.options] } : { ...EMPTY_Q, options: [...EMPTY_Q.options] });
-  const [tagInput, setTagInput] = useState((initialData?.tags || []).join(', '));
-
-  const handleSave = () => {
-    if (!q.id.trim() || !q.question.trim()) return alert('ID dan Pertanyaan wajib diisi!');
-    onSave({ ...q, tags: tagInput.split(',').map(t => t.trim()).filter(Boolean) });
-  };
-
-  return (
-    <div className="flex flex-col gap-16">
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-        <div>
-          <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>ID Soal *</label>
-          <input className="input" value={q.id} onChange={e => setQ(p => ({ ...p, id: e.target.value }))} placeholder="mis. MAT005" disabled={!!initialData} />
-        </div>
-        <div>
-          <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Mata Pelajaran</label>
-          <select className="input" value={q.subject} onChange={e => setQ(p => ({ ...p, subject: e.target.value }))}>
-            {Object.entries(SUBJECTS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Tingkat Kesulitan</label>
-          <select className="input" value={q.difficulty} onChange={e => setQ(p => ({ ...p, difficulty: +e.target.value }))}>
-            <option value={1}>1 – Mudah</option>
-            <option value={2}>2 – Sedang</option>
-            <option value={3}>3 – Sulit</option>
-          </select>
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Stimulus / Bacaan (opsional)</label>
-        <textarea className="input" rows={3} style={{ resize: 'vertical' }} value={q.stimulus || ''} onChange={e => setQ(p => ({ ...p, stimulus: e.target.value || null }))} />
-      </div>
-
-      <div>
-        <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Pertanyaan *</label>
-        <textarea className="input" rows={3} style={{ resize: 'vertical' }} value={q.question} onChange={e => setQ(p => ({ ...p, question: e.target.value }))} />
-      </div>
-
-      <div>
-        <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 8 }}>Pilihan Jawaban</label>
-        <div className="flex flex-col gap-8">
-          {q.options.map((opt, i) => {
-            const letter = String.fromCharCode(65 + i);
-            return (
-              <div key={i} className="flex gap-8 items-center">
-                <span style={{ fontWeight: 700, color: q.answer === letter ? 'var(--sky-600)' : 'var(--text-secondary)', width: 18, textAlign: 'center' }}>{letter}.</span>
-                <input className="input" style={{ flex: 1 }} value={opt} onChange={e => {
-                  const opts = [...q.options];
-                  opts[i] = e.target.value;
-                  setQ(p => ({ ...p, options: opts }));
-                }} />
-                <button
-                  className={`btn btn-sm ${q.answer === letter ? 'btn-primary' : 'btn-ghost'}`}
-                  style={{ minWidth: 80 }}
-                  onClick={() => setQ(p => ({ ...p, answer: letter }))}
-                  type="button"
-                >
-                  {q.answer === letter ? '✓ Kunci' : 'Jadikan Kunci'}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Pembahasan / Penjelasan</label>
-        <textarea className="input" rows={3} style={{ resize: 'vertical' }} value={q.explanation} onChange={e => setQ(p => ({ ...p, explanation: e.target.value }))} />
-      </div>
-
-      <div>
-        <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Tags (pisah koma)</label>
-        <input className="input" value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="mis. aljabar, persamaan-linear" />
-      </div>
-
-      <div className="flex gap-8 justify-end mt-8">
-        <button className="btn btn-ghost" onClick={onCancel} type="button">Batal</button>
-        <button className="btn btn-primary" onClick={handleSave} type="button">💾 Simpan Soal</button>
-      </div>
-    </div>
-  );
-}
-
 function TabSoal() {
   const [questions, setQuestions] = useState(getQuestions());
   const [filter, setFilter] = useState('');
   const [subjectFilter, setSubjectFilter] = useState('ALL');
+  const [typeFilter, setTypeFilter] = useState('ALL');
   const [modal, setModal] = useState(null); // null | 'add' | editObj
 
   const reload = () => setQuestions(getQuestions());
@@ -261,7 +167,7 @@ function TabSoal() {
   const handleAdd = (q) => {
     if (getQuestions().find(x => x.id === q.id)) return alert('ID sudah ada!');
     addQuestion(q);
-    addActivityLog({ id: `LOG${Date.now()}`, type: 'content', message: `Soal baru ditambahkan: ${q.id} (${SUBJECTS[q.subject]?.label}).`, timestamp: new Date().toISOString() });
+    addActivityLog({ id: `LOG${Date.now()}`, type: 'content', message: `Soal baru ditambahkan: ${q.id} (${getQuestionTypeConfig(q.questionType).shortLabel}, ${SUBJECTS[q.subject]?.label}).`, timestamp: new Date().toISOString() });
     reload();
     setModal(null);
   };
@@ -282,9 +188,14 @@ function TabSoal() {
 
   const filtered = questions.filter(q => {
     const matchSubject = subjectFilter === 'ALL' || q.subject === subjectFilter;
+    const matchType = typeFilter === 'ALL' || q.questionType === typeFilter;
     const matchSearch  = !filter || q.id.toLowerCase().includes(filter.toLowerCase()) || q.question.toLowerCase().includes(filter.toLowerCase());
-    return matchSubject && matchSearch;
+    return matchSubject && matchType && matchSearch;
   });
+
+  const typeCounts = Object.fromEntries(
+    Object.keys(QUESTION_TYPES).map(t => [t, questions.filter(q => q.questionType === t).length])
+  );
 
   return (
     <>
@@ -307,8 +218,22 @@ function TabSoal() {
               <option value="ALL">Semua Mapel</option>
               {Object.entries(SUBJECTS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
             </select>
+            <select className="input" style={{ width: 'auto' }} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+              <option value="ALL">Semua Tipe</option>
+              {Object.values(QUESTION_TYPES).map(t => (
+                <option key={t.id} value={t.id}>{t.shortLabel} – {t.label}</option>
+              ))}
+            </select>
             <button className="btn btn-primary btn-sm" onClick={() => setModal('add')}>+ Tambah Soal</button>
           </div>
+        </div>
+
+        <div className="flex gap-8 mb-16" style={{ flexWrap: 'wrap' }}>
+          {Object.values(QUESTION_TYPES).map(t => (
+            <span key={t.id} className="badge badge-sky" style={{ fontSize: 11 }}>
+              {t.icon} {t.shortLabel}: {typeCounts[t.id] ?? 0}
+            </span>
+          ))}
         </div>
 
         <div className="table-wrap">
@@ -316,27 +241,35 @@ function TabSoal() {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Tipe</th>
+                <th>Subtes</th>
                 <th>Mapel</th>
                 <th>Pertanyaan (potongan)</th>
                 <th>Kesulitan</th>
+                <th>Status</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(q => (
+              {filtered.map(q => {
+                const typeCfg = getQuestionTypeConfig(q.questionType);
+                return (
                 <tr key={q.id}>
                   <td><code style={{ fontSize: 12 }}>{q.id}</code></td>
+                  <td><span className="badge badge-yellow" style={{ fontSize: 11 }} title={typeCfg.label}>{typeCfg.icon} {typeCfg.shortLabel}</span></td>
+                  <td style={{ fontSize: 11 }}>{SUBTESTS[q.subtest]?.label ?? q.subtest}</td>
                   <td><span className="badge badge-sky" style={{ fontSize: 11 }}>{SUBJECTS[q.subject]?.label ?? q.subject}</span></td>
-                  <td style={{ maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.question}</td>
+                  <td style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.question}</td>
                   <td><span className={`badge ${DIFF_BADGE[q.difficulty]}`}>{DIFF_LABEL[q.difficulty]}</span></td>
+                  <td><span className={`badge ${q.isActive ? 'badge-green' : 'badge-gray'}`}>{q.isActive ? 'Aktif' : 'Nonaktif'}</span></td>
                   <td>
                     <button className="btn btn-ghost btn-sm text-sky" onClick={() => setModal({ ...q })}>Edit</button>
                     <button className="btn btn-ghost btn-sm text-error" onClick={() => handleDelete(q.id)}>Hapus</button>
                   </td>
                 </tr>
-              ))}
+              );})}
               {filtered.length === 0 && (
-                <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: 24 }}>Tidak ada soal ditemukan.</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: 24 }}>Tidak ada soal ditemukan.</td></tr>
               )}
             </tbody>
           </table>
@@ -640,10 +573,9 @@ function TabSettings() {
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (!confirm('⚠️ Reset SEMUA data (soal, pengguna, paket tryout, pengaturan) ke kondisi awal?\n\nTindakan ini tidak dapat dibatalkan!')) return;
-    resetToDefaults();
-    // Reload page so all tabs pick up fresh data
+    await resetToDefaults();
     window.location.reload();
   };
 
@@ -667,7 +599,9 @@ function TabSettings() {
             </div>
             <div>
               <label className="text-xs text-muted" style={{ display: 'block', marginBottom: 4 }}>Tanggal UTBK</label>
-              <input type="datetime-local" className="input" value={settings.utbkDate?.slice(0, 16)} onChange={e => setSettings(s => ({ ...s, utbkDate: e.target.value + ':00+07:00' }))} />
+              <p className="input" style={{ background: 'var(--gray-50)', color: 'var(--text-secondary)', cursor: 'default' }}>
+                {new Date(settings.utbkDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
             </div>
           </div>
         </div>

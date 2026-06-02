@@ -2,9 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 export default function Navbar() {
-  const user = useStore(s => s.user);
-  const mode = user.mode;
-  const role = user.role;
+  const role = useStore(s => s.user.role);
 
   return (
     <nav className="navbar">
@@ -33,6 +31,12 @@ export default function Navbar() {
           >
             📊 Statistik
           </NavLink>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+          >
+            ⚙️ Setting
+          </NavLink>
           {role === 'admin' ? (
             <NavLink
               to="/admin"
@@ -50,12 +54,6 @@ export default function Navbar() {
               🔒 Login Admin
             </NavLink>
           )}
-          <span
-            className="badge badge-sky hide-mobile"
-            style={{ marginLeft: 8 }}
-          >
-            {mode === 'speedrun' ? '⚡ Speedrun' : '☕ Santai'}
-          </span>
         </div>
       </div>
     </nav>

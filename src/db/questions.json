@@ -152,5 +152,33 @@
     "distractorAnalysis": { "A": "Salah menghitung total.", "B": "Menggunakan rata-rata salah.", "C": "Keliru rumus rata-rata.", "E": "Mengabaikan jumlah bilangan." },
     "communityStats": { "correctRate": 0.52, "ontimeRate": 0.40 },
     "tags": ["statistika", "rata-rata"]
+  },
+  {
+    "id": "PK001", "subject": "PBM", "subtest": "PK", "questionType": "is", "difficulty": 1, "dinaSlip": 0.1, "dinaGuess": 0.2,
+    "stimulus": null,
+    "question": "Jika 15% dari suatu bilangan adalah 45, maka bilangan tersebut adalah …",
+    "options": [],
+    "answer": "300",
+    "answerVariants": ["300.0"],
+    "explanation": "15% × n = 45 → n = 45 ÷ 0,15 = 300. Jawaban: 300.",
+    "communityStats": { "correctRate": 0.74, "ontimeRate": 0.62 },
+    "tags": ["persentase", "aritmatika"],
+    "source": "Contoh UTBK", "year": 2026, "isActive": true
+  },
+  {
+    "id": "PU001", "subject": "LINGPM", "subtest": "PU", "questionType": "pmk", "difficulty": 2, "dinaSlip": 0.12, "dinaGuess": 0.25,
+    "stimulus": null,
+    "question": "Tentukan Benar/Salah untuk setiap pernyataan berikut!",
+    "statements": [
+      "Semua mamalia bernapas dengan paru-paru.",
+      "Paus adalah ikan.",
+      "Semua ikan bernapas dengan insang."
+    ],
+    "options": [],
+    "answer": ["Benar", "Salah", "Benar"],
+    "explanation": "(1) Benar — mamalia bernapas dengan paru-paru. (2) Salah — paus termasuk mamalia, bukan ikan. (3) Benar — ikan bernapas dengan insang.",
+    "communityStats": { "correctRate": 0.58, "ontimeRate": 0.48 },
+    "tags": ["logika", "silogisme"],
+    "source": "Contoh UTBK", "year": 2026, "isActive": true
   }
 ]

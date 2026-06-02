@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { SUBJECTS } from '../data/questions';
+import { getQuestionTypeConfig, formatAnswerDisplay, formatUserAnswerDisplay } from '../data/questionTypes';
 
 const REASON_LABELS = {
   tidak_tau:    { emoji: '🤔', text: 'Beneran ga tau konsepnya', color: 'var(--error)' },
@@ -219,6 +220,9 @@ export default function ReviewSesi() {
                       <span className={`badge ${r.difficulty === 1 ? 'badge-green' : r.difficulty === 2 ? 'badge-yellow' : 'badge-red'}`}>
                         {'⭐'.repeat(r.difficulty)}
                       </span>
+                      <span className="badge badge-yellow" style={{ marginLeft: 6 }}>
+                        {getQuestionTypeConfig(r.questionType).shortLabel}
+                      </span>
                     </div>
                   </div>
                   <div className="flex gap-8">
@@ -246,6 +250,16 @@ export default function ReviewSesi() {
                   {r.question}
                 </p>
 
+                {r.questionType === 'pmk' && r.statements?.length > 0 && (
+                  <div style={{ marginBottom: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {r.statements.map((stmt, si) => (
+                      <div key={si} className="text-sm" style={{ padding: '8px 12px', background: 'var(--surface-2)', borderRadius: 6 }}>
+                        {si + 1}. {stmt}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="flex gap-16 mb-12">
                   <div style={{
                     padding: '6px 12px', borderRadius: 6,
@@ -255,7 +269,7 @@ export default function ReviewSesi() {
                   }}>
                     <span style={{ color: 'var(--text-muted)' }}>Jawabanmu: </span>
                     <strong style={{ color: r.isCorrect ? 'var(--success)' : 'var(--error)' }}>
-                      {r.userAnswer ?? '(Tidak dijawab)'}
+                      {formatUserAnswerDisplay(r, r.userAnswer)}
                     </strong>
                     {' '}{r.isCorrect ? '✅' : '❌'}
                   </div>
@@ -266,7 +280,7 @@ export default function ReviewSesi() {
                       fontSize: 13,
                     }}>
                       <span style={{ color: 'var(--text-muted)' }}>Jawaban benar: </span>
-                      <strong style={{ color: 'var(--success)' }}>{r.answer} ✅</strong>
+                      <strong style={{ color: 'var(--success)' }}>{formatAnswerDisplay(r)} ✅</strong>
                     </div>
                   )}
                 </div>
@@ -305,7 +319,7 @@ export default function ReviewSesi() {
                 </div>
 
                 {/* Distractor analysis for wrong answers */}
-                {!r.isCorrect && r.distractorAnalysis && r.userAnswer && r.distractorAnalysis[r.userAnswer] && (
+                {!r.isCorrect && r.questionType === 'pg' && r.distractorAnalysis && r.userAnswer && r.distractorAnalysis[r.userAnswer] && (
                   <div style={{
                     background: '#fef9c3', border: '1px solid #fde68a',
                     borderRadius: 8, padding: '10px 14px',

@@ -4,16 +4,22 @@
  * Sumber data yang sebenarnya ada di src/db/dataStore.js
  */
 
-export { getQuestions as questions, getQuestionsBySubjects } from '../db/dataStore';
+export {
+  getQuestions as questions,
+  getQuestionsBySubjects,
+  getQuestionsBySubjectsTotal,
+  getAdaptiveQuestions,
+  distributeSoalCounts,
+} from '../db/dataStore';
 
-// Re-export SUBJECTS (static, tidak perlu disimpan)
 export const SUBJECTS = {
-  MATBAS: { label: 'Matematika Dasar',           code: 'MAT', icon: '📐', color: '#0ea5e9' },
-  LINGPM: { label: 'Penalaran Umum',              code: 'PU',  icon: '🧩', color: '#8b5cf6' },
-  BINDON: { label: 'Bahasa Indonesia',            code: 'BIN', icon: '📖', color: '#10b981' },
-  BINGEN: { label: 'Bahasa Inggris',             code: 'ENG', icon: '🌐', color: '#f59e0b' },
-  PPU:    { label: 'Pemahaman Bacaan & Menulis',  code: 'PPU', icon: '✍️',  color: '#ef4444' },
-  PBM:    { label: 'Pengetahuan Kuantitatif',     code: 'PBM', icon: '🔢', color: '#06b6d4' },
+  MATBAS: { label: 'Penalaran Matematika',         code: 'PM',  icon: '📐', color: '#0ea5e9' },
+  LINGPM: { label: 'Penalaran Umum',               code: 'PU',  icon: '🧠', color: '#8b5cf6' },
+  BINDON: { label: 'Literasi Bahasa Indonesia',    code: 'LBI', icon: '📖', color: '#10b981' },
+  BINGEN: { label: 'Literasi Bahasa Inggris',      code: 'LBE', icon: '🌐', color: '#f59e0b' },
+  PPU:    { label: 'Pengetahuan & Pemahaman Umum', code: 'PPU', icon: '💡', color: '#ef4444' },
+  PBM:    { label: 'Pemahaman Bacaan & Menulis',   code: 'PBM', icon: '✍️', color: '#ec4899' },
+  PK:     { label: 'Pengetahuan Kuantitatif',      code: 'PK',  icon: '🔢', color: '#06b6d4' },
 };
 
 export function generateDraftCode(subjectKeys) {
@@ -29,9 +35,12 @@ export function generateDraftCode(subjectKeys) {
   return `${mapelCode}.${yy}${mm}${dd}.${hh}${min}${ss}${sessionNum}TODU`;
 }
 
-export function updateMastery(currentMastery, isCorrect, reason) {
+import { getModeConfig } from './modes';
+
+export function updateMastery(currentMastery, isCorrect, reason, mode = 'speedrun') {
+  const config = getModeConfig(mode);
   const penalty = { tidak_tau: 0.15, lupa_rumus: 0.08, panik: 0.04, terkecoh: 0.10, salah_pencet: 0.02 };
-  if (isCorrect) return Math.min(1, currentMastery + 0.06 * (1 - currentMastery));
-  const p = penalty[reason] ?? 0.08;
+  if (isCorrect) return Math.min(1, currentMastery + config.masteryGain * (1 - currentMastery));
+  const p = (penalty[reason] ?? 0.08) * config.masteryPenaltyMultiplier;
   return Math.max(0, currentMastery - p);
 }

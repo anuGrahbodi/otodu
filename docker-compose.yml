@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: otodu-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: otodu
+      POSTGRES_PASSWORD: otodu123
+      POSTGRES_DB: otodu
+    ports:
+      - "5432:5432"
+    volumes:
+      - otodu_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U otodu -d otodu"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  otodu_pg_data:
