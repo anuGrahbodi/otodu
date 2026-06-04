@@ -122,13 +122,17 @@
   z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 60px;
   align-items: center;
+  text-align: center;
 }
 .lp-hero-text {
   animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .lp-hero-badge {
   display: inline-flex;
@@ -159,14 +163,15 @@
   font-size: clamp(16px, 2vw, 19px);
   color: rgba(255, 255, 255, 0.75);
   line-height: 1.7;
-  max-width: 520px;
-  margin-bottom: 32px;
+  max-width: 600px;
+  margin: 0 auto 32px;
 }
 .lp-hero-sub strong {
   color: rgba(255, 255, 255, 0.95);
 }
 .lp-hero-actions {
   display: flex;
+  justify-content: center;
   gap: 14px;
   flex-wrap: wrap;
   margin-bottom: 20px;
