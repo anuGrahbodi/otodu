@@ -1,4 +1,13 @@
-# React + Vite
+---
+title: OTODU Backend
+emoji: 🗄️
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
+# OTODU Backend API
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
