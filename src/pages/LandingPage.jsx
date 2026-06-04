@@ -170,10 +170,7 @@ export default function LandingPage() {
       <section className="lp-hero" id="hero">
         <div className="lp-hero-grid">
           <div className="lp-hero-text">
-            <h1 className="lp-hero-title">
-              Latihan UTBK yang<br />
-              <span className="lp-gradient-text">Tahu Kelemahanmu</span>
-            </h1>
+            <h1 className="lp-hero-title">OTODU</h1>
             <p className="lp-hero-sub">
               Sistem adaptive learning yang memilih soal berdasarkan kemampuanmu.
             </p>
