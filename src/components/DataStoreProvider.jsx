@@ -15,10 +15,15 @@ export default function DataStoreProvider({ children }) {
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexDirection: 'column', gap: 12, background: 'var(--surface-2, #f8fafc)',
+        background: 'var(--surface-2, #f8fafc)',
       }}>
-        <div style={{ fontSize: 40 }}>🗄️</div>
-        <p style={{ fontWeight: 600, color: 'var(--sky-700, #0369a1)' }}>Memuat database...</p>
+        <div className="otodu-loader">
+          <span>O</span>
+          <span>T</span>
+          <span>O</span>
+          <span>D</span>
+          <span>U</span>
+        </div>
       </div>
     );
   }

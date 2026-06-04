@@ -672,6 +672,30 @@ input[type="range"]::-webkit-slider-thumb {
 .animate-fade { animation: fadeIn 0.4s ease; }
 .animate-slide { animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1); }
 
+@keyframes letterAppearFade {
+  0%   { opacity: 0; transform: translateY(5px); }
+  20%  { opacity: 1; transform: translateY(0); }
+  70%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-5px); }
+}
+.otodu-loader {
+  display: flex;
+  gap: 6px;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--sky-600);
+  letter-spacing: 4px;
+}
+.otodu-loader span {
+  opacity: 0;
+  animation: letterAppearFade 2s infinite ease-in-out;
+}
+.otodu-loader span:nth-child(1) { animation-delay: 0.0s; }
+.otodu-loader span:nth-child(2) { animation-delay: 0.15s; }
+.otodu-loader span:nth-child(3) { animation-delay: 0.3s; }
+.otodu-loader span:nth-child(4) { animation-delay: 0.45s; }
+.otodu-loader span:nth-child(5) { animation-delay: 0.6s; }
+
 /* ─── UTILITIES ──────────────────────────────────────────── */
 .flex   { display: flex; }
 .flex-col { flex-direction: column; }
