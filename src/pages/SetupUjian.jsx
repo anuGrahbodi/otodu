@@ -11,6 +11,22 @@ function getRecommendedSubjects(mastery) {
     .slice(0, 2); // Ambil 2 topik terlemah
 }
 
+const REQUIRED_KEYS = [
+  { key: 'id', label: 'ID Soal', desc: 'ID unik untuk setiap soal' },
+  { key: 'question', label: 'Teks Pertanyaan', desc: 'Pertanyaan atau isi soal utama (Mendukung HTML)' },
+  { key: 'answer', label: 'Jawaban Benar', desc: 'Kunci jawaban benar (misal: "A", atau ["B","S"] untuk PMK)' },
+  { key: 'options', label: 'Pilihan Jawaban', desc: 'Array pilihan jawaban untuk pilihan ganda (misal: A-E)' },
+  { key: 'subject', label: 'Mata Pelajaran', desc: 'Mata pelajaran / topik soal' },
+  { key: 'subtest', label: 'Subtes', desc: 'Subtes terkait (misal: PU, PM, LBI)' },
+  { key: 'questionType', label: 'Tipe Soal', desc: 'Tipe soal: pg (pilihan ganda), pmk (pernyataan), is (isian)' },
+  { key: 'difficulty', label: 'Tingkat Kesulitan', desc: 'Nilai angka 1 (mudah), 2 (sedang), 3 (sulit)' },
+  { key: 'idealTime', label: 'Waktu Ideal', desc: 'Waktu pengerjaan ideal dalam detik (misal: 90)' },
+  { key: 'stimulus', label: 'Stimulus/Teks Bacaan', desc: 'Teks bacaan pendukung sebelum soal (Mendukung HTML)' },
+  { key: 'statements', label: 'Daftar Pernyataan', desc: 'Array pernyataan untuk tipe soal Pilihan Ganda Kompleks (pmk)' },
+  { key: 'explanation', label: 'Pembahasan', desc: 'Penjelasan/pembahasan solusi soal (Mendukung HTML)' },
+  { key: 'source', label: 'Sumber Soal', desc: 'Asal atau sumber referensi soal (misal: UTBK 2024)' },
+];
+
 export default function SetupUjian() {
   const navigate = useNavigate();
   const { mastery, activeDraft, createSession, discardDraft } = useStore();
@@ -23,6 +39,102 @@ export default function SetupUjian() {
   const [apiUrl, setApiUrl] = useState('');
   const [isStarting, setIsStarting] = useState(false);
   const hasActiveDraft = !!activeDraft;
+
+  // State untuk pengujian & pemetaan API
+  const [isTestingApi, setIsTestingApi] = useState(false);
+  const [testError, setTestError] = useState('');
+  const [sampleKeys, setSampleKeys] = useState(null);
+  const [customMapping, setCustomMapping] = useState({
+    id: 'id',
+    question: 'question',
+    subject: 'subject',
+    subtest: 'subtest',
+    questionType: 'questionType',
+    difficulty: 'difficulty',
+    idealTime: 'idealTime',
+    stimulus: 'stimulus',
+    options: 'options',
+    statements: 'statements',
+    answer: 'answer',
+    explanation: 'explanation',
+    source: 'source',
+  });
+
+  const handleTestApi = async () => {
+    if (!apiUrl) return;
+    setIsTestingApi(true);
+    setTestError('');
+    setSampleKeys(null);
+
+    try {
+      const url = new URL(apiUrl);
+      url.searchParams.set('subjects', activeSubjects.join(','));
+      url.searchParams.set('limit', '1');
+
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+      const data = await res.json();
+      const apiQuestions = Array.isArray(data) ? data : (data.data || data.questions);
+
+      if (!apiQuestions || apiQuestions.length === 0) {
+        throw new Error('Respons API kosong atau format data tidak dikenali. Respons harus berupa array langsung atau objek dengan key "data" atau "questions" yang berisi array.');
+      }
+
+      const sampleItem = apiQuestions[0];
+      if (typeof sampleItem !== 'object' || sampleItem === null) {
+        throw new Error('Item pertama dari respons API bukan merupakan objek JSON.');
+      }
+
+      const keys = Object.keys(sampleItem);
+      setSampleKeys(keys);
+
+      const newMapping = { ...customMapping };
+      
+      REQUIRED_KEYS.forEach(({ key }) => {
+        if (keys.includes(key)) {
+          newMapping[key] = key;
+          return;
+        }
+
+        const lowercaseKeys = keys.map(k => k.toLowerCase());
+        const mappedIndex = lowercaseKeys.findIndex(lk => {
+          if (key === 'question' && (lk === 'soal' || lk === 'question_text' || lk === 'tanya' || lk.includes('question'))) return true;
+          if (key === 'answer' && (lk === 'kunci' || lk === 'jawaban' || lk === 'correct_answer' || lk.includes('answer'))) return true;
+          if (key === 'options' && (lk === 'pilihan' || lk === 'choices' || lk.includes('option'))) return true;
+          if (key === 'subject' && (lk === 'subject_id' || lk === 'materi' || lk.includes('subject'))) return true;
+          if (key === 'subtest' && (lk === 'subtest_id' || lk.includes('subtest'))) return true;
+          if (key === 'questionType' && (lk === 'question_type' || lk === 'tipe' || lk.includes('type'))) return true;
+          if (key === 'idealTime' && (lk === 'ideal_time' || lk === 'waktu' || lk.includes('time'))) return true;
+          if (key === 'explanation' && (lk === 'pembahasan' || lk === 'solusi' || lk.includes('explanation'))) return true;
+          return false;
+        });
+
+        if (mappedIndex !== -1) {
+          newMapping[key] = keys[mappedIndex];
+        } else {
+          if (!keys.includes(newMapping[key])) {
+            newMapping[key] = '';
+          }
+        }
+      });
+
+      setCustomMapping(newMapping);
+    } catch (err) {
+      console.error('API Test Error:', err);
+      setTestError(err.message);
+    } finally {
+      setIsTestingApi(false);
+    }
+  };
+
+  const handleMappingChange = (otoduKey, apiFieldName) => {
+    setCustomMapping(prev => ({
+      ...prev,
+      [otoduKey]: apiFieldName
+    }));
+  };
+
 
   const isRekomendasi = setupMode === 'rekomendasi';
   const activeSubjects = isRekomendasi ? recommendedSubjects : selected;
@@ -72,21 +184,34 @@ export default function SetupUjian() {
           throw new Error('Response API kosong');
         }
 
-        finalQuestions = apiQuestions.map((q, i) => ({
-          id: q.id || `API-${Date.now()}-${i}`,
-          subject: q.subject || activeSubjects[i % activeSubjects.length],
-          subtest: q.subtest || 'PU',
-          questionType: q.questionType || 'pg',
-          difficulty: q.difficulty || 2,
-          idealTime: q.idealTime || 90,
-          stimulus: q.stimulus || '',
-          question: q.question || '[Soal dari API tidak memiliki teks]',
-          options: q.options || ['A', 'B', 'C', 'D', 'E'],
-          statements: q.statements || [],
-          answer: q.answer || 'A',
-          explanation: q.explanation || '',
-          source: q.source || 'API Eksternal',
-        }));
+        finalQuestions = apiQuestions.map((q, i) => {
+          const getMappedVal = (otoduKey, defaultValue) => {
+            const apiField = customMapping[otoduKey];
+            if (apiField && q[apiField] !== undefined && q[apiField] !== null) {
+              return q[apiField];
+            }
+            if (q[otoduKey] !== undefined && q[otoduKey] !== null) {
+              return q[otoduKey];
+            }
+            return defaultValue;
+          };
+
+          return {
+            id: getMappedVal('id', `API-${Date.now()}-${i}`),
+            subject: getMappedVal('subject', activeSubjects[i % activeSubjects.length]),
+            subtest: getMappedVal('subtest', 'PU'),
+            questionType: getMappedVal('questionType', 'pg'),
+            difficulty: Number(getMappedVal('difficulty', 2)),
+            idealTime: Number(getMappedVal('idealTime', 90)),
+            stimulus: getMappedVal('stimulus', ''),
+            question: getMappedVal('question', '[Soal dari API tidak memiliki teks]'),
+            options: getMappedVal('options', ['A', 'B', 'C', 'D', 'E']),
+            statements: getMappedVal('statements', []),
+            answer: getMappedVal('answer', 'A'),
+            explanation: getMappedVal('explanation', ''),
+            source: getMappedVal('source', 'API Eksternal'),
+          };
+        });
       } catch (err) {
         console.error('API Fetch Error:', err);
         alert('Gagal mengambil soal dari API. Sistem akan menjalankan soal dummy (lokal) sebagai gantinya.');
@@ -223,6 +348,117 @@ export default function SetupUjian() {
             </div>
           )}
         </div>
+
+        {/* ─ DYNAMIC VARIABLE MAPPING ──────────────────── */}
+        {apiUrl && (
+          <div className="card mt-16 animate-fade">
+            <div className="flex items-center justify-between mb-12">
+              <div>
+                <h3 className="title-sm">🔗 Hubungkan Variabel API Kustom</h3>
+                <p className="text-xs text-muted mt-4">Uji koneksi dan petakan struktur JSON API Anda ke Otodu</p>
+              </div>
+              <button
+                type="button"
+                className={`btn btn-sm ${isTestingApi ? 'btn-ghost' : 'btn-primary'}`}
+                onClick={handleTestApi}
+                disabled={isTestingApi}
+                style={{ alignSelf: 'flex-start' }}
+              >
+                {isTestingApi ? '⏳ Menguji...' : '🧪 Uji & Deteksi Respons'}
+              </button>
+            </div>
+
+            {testError && (
+              <div className="alert alert-error mt-12">
+                <span>❌</span>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontWeight: 700, fontSize: 13 }}>Gagal mengambil sampel data:</p>
+                  <p className="text-xs mt-2" style={{ fontFamily: 'monospace' }}>{testError}</p>
+                </div>
+              </div>
+            )}
+
+            {sampleKeys && (
+              <div className="mt-12">
+                <div className="alert alert-success mb-16">
+                  <span>✓</span>
+                  <div>
+                    <p style={{ fontWeight: 700, fontSize: 13 }}>Koneksi Sukses!</p>
+                    <p className="text-xs mt-2">Ditemukan {sampleKeys.length} variabel di respons API Anda. Silakan hubungkan field di bawah:</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-12 mt-16" style={{ maxHeight: '350px', overflowY: 'auto', paddingRight: '4px' }}>
+                  {REQUIRED_KEYS.map(({ key, label, desc }) => {
+                    const apiVal = customMapping[key];
+                    const isFulfilled = apiVal && sampleKeys.includes(apiVal);
+
+                    return (
+                      <div
+                        key={key}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 6,
+                          padding: '12px',
+                          borderRadius: 'var(--radius-sm)',
+                          border: `1px solid ${isFulfilled ? '#bbf7d0' : '#fef3c7'}`,
+                          background: isFulfilled ? '#f0fdf4' : '#fffbeb',
+                          transition: 'var(--transition)'
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--text-primary)' }}>{label}</span>
+                            <span style={{ fontFamily: 'monospace', fontSize: 10, color: 'var(--gray-500)', marginLeft: 6 }}>({key})</span>
+                          </div>
+                          <div>
+                            {isFulfilled ? (
+                              <span className="badge badge-green" style={{ fontSize: 10, padding: '2px 8px' }}>
+                                ✓ Terhubung: <strong>{apiVal}</strong>
+                              </span>
+                            ) : (
+                              <span className="badge badge-yellow" style={{ fontSize: 10, padding: '2px 8px' }}>
+                                ⚠️ Belum Terhubung
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <p className="text-xs text-muted" style={{ margin: '1px 0' }}>{desc}</p>
+                        
+                        <div className="flex gap-8 items-center mt-4">
+                          <span className="text-xs text-muted" style={{ minWidth: '100px', fontSize: 11 }}>Key API Anda:</span>
+                          <div style={{ flex: 1, display: 'flex', gap: '6px' }}>
+                            <input
+                              type="text"
+                              className="input"
+                              style={{ flex: 1, padding: '6px 10px', fontSize: 12, height: '30px' }}
+                              placeholder={`Ketik nama key API kustom...`}
+                              value={apiVal || ''}
+                              onChange={e => handleMappingChange(key, e.target.value)}
+                            />
+                            <select
+                              className="input select"
+                              style={{ width: '130px', padding: '0 8px', fontSize: 11, height: '30px', cursor: 'pointer' }}
+                              value={sampleKeys.includes(apiVal) ? apiVal : ''}
+                              onChange={e => handleMappingChange(key, e.target.value)}
+                            >
+                              <option value="">-- Pilih Opsi --</option>
+                              {sampleKeys.map(sk => (
+                                <option key={sk} value={sk}>{sk}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ─ REKOMENDASI SISTEM ──────────────────────── */}
         {isRekomendasi && (
