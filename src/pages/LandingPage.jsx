@@ -142,7 +142,6 @@ export default function LandingPage() {
       <nav className="lp-nav">
         <div className="lp-nav-inner">
           <a href="#hero" className="lp-nav-brand">
-            <span className="lp-nav-dot" />
             <span>OTODU</span>
           </a>
 
@@ -169,17 +168,14 @@ export default function LandingPage() {
 
       {/* ── HERO ─────────────────────────────────────── */}
       <section className="lp-hero" id="hero">
-        <HeroParticles />
         <div className="lp-hero-grid">
           <div className="lp-hero-text">
-            <div className="lp-hero-badge">🎓 Platform Latihan UTBK Adaptif</div>
             <h1 className="lp-hero-title">
               Latihan UTBK yang<br />
               <span className="lp-gradient-text">Tahu Kelemahanmu</span>
             </h1>
             <p className="lp-hero-sub">
               Sistem adaptive learning yang memilih soal berdasarkan kemampuanmu.
-              Bukan latihan biasa — ini <strong>personal</strong>.
             </p>
             <div className="lp-hero-actions">
               <button className="btn btn-primary btn-lg lp-cta-glow" onClick={goAuth}>
@@ -189,7 +185,6 @@ export default function LandingPage() {
                 📖 Lihat Cara Kerja
               </a>
             </div>
-            <p className="lp-hero-small">Gratis selamanya · Daftar dalam 30 detik · Langsung pakai</p>
           </div>
 
           <div className="lp-hero-visual">
@@ -388,7 +383,6 @@ export default function LandingPage() {
         className={`lp-cta-section ${ctaReveal.visible ? 'lp-visible' : ''}`}
         ref={ctaReveal.ref}
       >
-        <HeroParticles />
         <div className="lp-cta-inner">
           <h2>Siap Taklukkan UTBK?</h2>
           <p>Mulai latihan sekarang. Gratis, tanpa kartu kredit.</p>
@@ -404,7 +398,6 @@ export default function LandingPage() {
         <div className="lp-footer-inner">
           <div className="lp-footer-brand">
             <div className="lp-nav-brand" style={{ fontSize: 22 }}>
-              <span className="lp-nav-dot" />
               <span>OTODU</span>
             </div>
             <p>Platform latihan UTBK dengan adaptive learning. Belajar lebih cerdas, bukan lebih keras.</p>
