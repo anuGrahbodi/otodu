@@ -112,7 +112,7 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(165deg, #0c1929 0%, #0c4a6e 40%, #0369a1 70%, #0ea5e9 100%);
+  background: #0f172a;
   padding: 120px 24px 80px;
   overflow: hidden;
 }
@@ -167,10 +167,7 @@
   margin-bottom: 20px;
 }
 .lp-gradient-text {
-  background: linear-gradient(135deg, #38bdf8, #7dd3fc, #bae6fd);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #38bdf8;
 }
 .lp-hero-sub {
   font-size: clamp(16px, 2vw, 19px);
