@@ -111,28 +111,25 @@
   position: relative;
   min-height: 100vh;
   display: flex;
-  align-items: center;
   background: #0f172a;
-  padding: 120px 24px 80px;
   overflow: hidden;
 }
 
 .lp-hero-grid {
   position: relative;
   z-index: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 60px;
-  align-items: center;
-  text-align: center;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
 }
 .lp-hero-text {
   animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 120px 10%;
 }
 .lp-hero-badge {
   display: inline-flex;
@@ -163,15 +160,14 @@
   font-size: clamp(16px, 2vw, 19px);
   color: rgba(255, 255, 255, 0.75);
   line-height: 1.7;
-  max-width: 600px;
-  margin: 0 auto 32px;
+  max-width: 520px;
+  margin: 0 0 32px 0;
 }
 .lp-hero-sub strong {
   color: rgba(255, 255, 255, 0.95);
 }
 .lp-hero-actions {
   display: flex;
-  justify-content: center;
   gap: 14px;
   flex-wrap: wrap;
   margin-bottom: 20px;
@@ -200,9 +196,36 @@
 
 /* ── HERO VISUAL (Mockup) ─────────────────────────────────── */
 .lp-hero-visual {
+  position: relative;
+  width: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
-  animation: slideUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+  background: linear-gradient(135deg, #0f172a 0%, #075985 100%);
+  animation: fadeIn 1.2s ease 0.3s backwards;
+  border-left: 1px solid rgba(255,255,255,0.05);
+}
+
+@media (max-width: 992px) {
+  .lp-hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .lp-hero-text {
+    padding: 120px 24px 60px;
+    align-items: center;
+    text-align: center;
+  }
+  .lp-hero-sub {
+    margin: 0 auto 32px;
+  }
+  .lp-hero-actions {
+    justify-content: center;
+  }
+  .lp-hero-visual {
+    padding: 60px 24px;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
 }
 .lp-mockup {
   position: relative;
