@@ -11,8 +11,11 @@ const SCHEMA_PATH = path.join(__dirname, '..', 'database', 'schema.postgresql.sq
 
 const { Pool } = pg;
 
+const isRemoteDb = process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost');
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://otodu:otodu123@localhost:5432/otodu',
+  ...(isRemoteDb && { ssl: { rejectUnauthorized: false } })
 });
 
 export const DEFAULT_STUDENT_ID = 'local-default';
