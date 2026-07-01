@@ -1,5 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logoFull from '../assets/images/logo_full.png';
+import logoFace from '../assets/images/logo_face.png';
+import testmateLogo from '../assets/images/testmate.png';
+
+function getDaysUntilUTBK() {
+  const targetDate = new Date('2027-04-21T00:00:00');
+  const now = new Date();
+  const diffTime = targetDate - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0;
+}
 
 /* ── Animated counter hook ─────────────────────────────── */
 function useCountUp(end, duration = 2000, startOnView = true) {
@@ -142,7 +153,7 @@ export default function LandingPage() {
       <nav className="lp-nav">
         <div className="lp-nav-inner">
           <a href="#hero" className="lp-nav-brand">
-            <span>OTODU</span>
+            <img src={logoFull} alt="OTODU" style={{ height: 32, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
           </a>
 
           <div className={`lp-nav-links ${mobileMenu ? 'open' : ''}`}>
@@ -170,8 +181,15 @@ export default function LandingPage() {
       <section className="lp-hero" id="hero">
         <div className="lp-hero-grid">
           <div className="lp-hero-text">
-            <h1 className="lp-hero-title">OTODU</h1>
-            <p className="lp-hero-sub">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <img src={logoFace} alt="Logo" style={{ height: 90, objectFit: 'contain' }} />
+              <h1 className="lp-hero-title" style={{ margin: 0 }}>OTODU</h1>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px' }}>
+              <span style={{ fontSize: '15px', color: 'rgba(255,255,255,0.75)', fontWeight: 500, letterSpacing: '0.02em' }}>Powered by</span>
+              <img src={testmateLogo} alt="Testmate" style={{ height: 28, objectFit: 'contain' }} />
+            </div>
+            <p className="lp-hero-sub" style={{ marginTop: '24px' }}>
               Sistem adaptive learning yang memilih soal berdasarkan kemampuanmu.
             </p>
             <div className="lp-hero-actions">
@@ -197,7 +215,7 @@ export default function LandingPage() {
                 <div className="lp-mockup-body">
                   <div className="lp-mockup-greeting">Halo, Pejuang UTBK! 👋</div>
                   <div className="lp-mockup-countdown">
-                    <span className="lp-mockup-days">142</span>
+                    <span className="lp-mockup-days">{getDaysUntilUTBK()}</span>
                     <span className="lp-mockup-label">Hari menuju UTBK</span>
                   </div>
                   <div className="lp-mockup-progress">
@@ -394,8 +412,8 @@ export default function LandingPage() {
       <footer className="lp-footer">
         <div className="lp-footer-inner">
           <div className="lp-footer-brand">
-            <div className="lp-nav-brand" style={{ fontSize: 22 }}>
-              <span>OTODU</span>
+            <div className="lp-nav-brand" style={{ fontSize: 22, display: 'block', marginBottom: '16px' }}>
+              <img src={logoFull} alt="OTODU" style={{ height: 40, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
             </div>
             <p>Platform latihan UTBK dengan adaptive learning. Belajar lebih cerdas, bukan lebih keras.</p>
           </div>

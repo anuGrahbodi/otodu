@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import logoFull from '../assets/images/logo_full.png';
 
 /* ── Particles (reused from landing) ───────────────────── */
 function AuthParticles() {
@@ -228,8 +229,7 @@ export default function AuthPage() {
       <div className="auth-left">
         <div className="auth-left-content">
           <a href="/" className="lp-nav-brand" style={{ marginBottom: 40 }}>
-            <span className="lp-nav-dot" />
-            <span>OTODU</span>
+            <img src={logoFull} alt="OTODU" style={{ height: 40, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
           </a>
 
           <h1 className="auth-left-title">

@@ -5,6 +5,7 @@ import { getSettings } from '../db/dataStore';
 import { getDailyTargetProgress, isDailyTargetComplete, getModeConfig } from '../data/modes';
 import CircleProgress from '../components/CircleProgress';
 import ModeTooltip from '../components/ModeTooltip';
+import logoFace from '../assets/images/logo_face.png';
 
 function getCountdown(utbkDate) {
   const now = new Date();
@@ -41,9 +42,20 @@ export default function Dashboard() {
       <div className="container" style={{ paddingTop: 32 }}>
 
         <header className="dashboard-header">
-          <div>
-            <h1 className="title-lg">Halo, {user.name}! 👋</h1>
-            <p className="text-muted mt-4">Ringkasan belajarmu hari ini</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{
+              width: 48, height: 48,
+              borderRadius: 12,
+              background: 'linear-gradient(135deg, var(--sky-500), var(--sky-600))',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(14,165,233,0.3)'
+            }}>
+              <img src={logoFace} alt="OTODU" style={{ width: 30, height: 30, objectFit: 'contain' }} />
+            </div>
+            <div>
+              <h1 className="title-lg">Halo, {user.name}! 👋</h1>
+              <p className="text-muted mt-4">Ringkasan belajarmu hari ini</p>
+            </div>
           </div>
         </header>
 

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import logoFace from '../assets/images/logo_face.png';
 import { SUBJECTS, getAdaptiveQuestions, getQuestionsBySubjectsTotal, distributeSoalCounts, generateDraftCode } from '../data/questions';
 
 const ALL_SUBJECTS = Object.keys(SUBJECTS);
@@ -235,12 +236,25 @@ export default function SetupUjian() {
     <div className="page animate-fade">
       <div className="container" style={{ maxWidth: 760, paddingTop: 40 }}>
 
-        <h1 className="title-lg">📝 Persiapan Sesi Ujian</h1>
-        <p className="text-muted mt-8">
-          {isRekomendasi
-            ? 'Sistem akan memilih materi paling sesuai berdasarkan kemampuanmu saat ini.'
-            : 'Pilih materi dan jumlah soal sesuai kebutuhan belajarmu.'}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 44, height: 44,
+            borderRadius: 10,
+            background: 'linear-gradient(135deg, var(--sky-500), var(--sky-600))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(14,165,233,0.25)'
+          }}>
+            <img src={logoFace} alt="OTODU" style={{ width: 26, height: 26, objectFit: 'contain' }} />
+          </div>
+          <div>
+            <h1 className="title-lg">📝 Persiapan Sesi Ujian</h1>
+            <p className="text-muted mt-8">
+              {isRekomendasi
+                ? 'Sistem akan memilih materi paling sesuai berdasarkan kemampuanmu saat ini.'
+                : 'Pilih materi dan jumlah soal sesuai kebutuhan belajarmu.'}
+            </p>
+          </div>
+        </div>
 
         {hasActiveDraft && activeDraft && (
           <div className="alert alert-warning mt-20" style={{ alignItems: 'flex-start' }}>

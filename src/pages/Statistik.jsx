@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { SUBJECTS } from '../data/questions';
+import logoFace from '../assets/images/logo_face.png';
 
 function formatDate(iso) {
   const d = new Date(iso);
@@ -26,9 +27,20 @@ export default function Statistik() {
       <div className="container" style={{ paddingTop: 32 }}>
 
         <div className="flex items-center justify-between mb-24">
-          <div>
-            <h1 className="title-lg">📊 Statistik Lengkap</h1>
-            <p className="text-muted mt-4">Analitik mendalam perkembangan belajarmu</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{
+              width: 44, height: 44,
+              borderRadius: 10,
+              background: 'linear-gradient(135deg, var(--sky-500), var(--sky-600))',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 10px rgba(14,165,233,0.25)'
+            }}>
+              <img src={logoFace} alt="OTODU" style={{ width: 26, height: 26, objectFit: 'contain' }} />
+            </div>
+            <div>
+              <h1 className="title-lg">📊 Statistik Lengkap</h1>
+              <p className="text-muted mt-4">Analitik mendalam perkembangan belajarmu</p>
+            </div>
           </div>
           <button className="btn btn-primary" onClick={() => navigate('/setup-ujian')}>
             📝 Sesi Baru

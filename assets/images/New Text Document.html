@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Filter & Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        /* Gaya Dasar & Latar Belakang Gradien */
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1a202c;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Efek Glassmorphism */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 800;
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Kontrol Form */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="file"],
+        select,
+        button {
+            padding: 10px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        input[type="file"] {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        input[type="file"]::file-selector-button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #edf2f7;
+            color: #2b6cb0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-right: 12px;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: #e2e8f0;
+        }
+
+        select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        button {
+            background: #2b6cb0;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            padding: 10px 20px;
+            margin-left: auto;
+        }
+
+        button:hover {
+            background: #2c5282;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Tabel Data */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f7fafc;
+            font-weight: 700;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #fbfbfc;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glass-container">
+        <h2>CSV Viewer & Filter</h2>
+
+        <div class="controls">
+            <div class="input-group">
+                <label for="csvFileInput">1. Upload CSV</label>
+                <input type="file" id="csvFileInput" accept=".csv">
+            </div>
+
+            <div class="input-group" id="columnSelectGroup" style="display: none;">
+                <label for="columnSelect">2. Pilih Kolom</label>
+                <select id="columnSelect">
+                    <option value="">-- Pilih Kolom --</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="valueSelectGroup" style="display: none;">
+                <label for="valueSelect">3. Filter Nilai</label>
+                <select id="valueSelect">
+                    <option value="">-- Semua Nilai --</option>
+                </select>
+            </div>
+
+            <button id="downloadBtn" disabled>Download Hasil</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="dataTable">
+                <thead>
+                    <tr id="tableHeader"></tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="100%" class="empty-state">Silakan upload file CSV untuk melihat data.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Variabel Global untuk menyimpan state data
+        let globalData = [];
+        let filteredData = [];
+        let headers = [];
+
+        // Elemen DOM
+        const fileInput = document.getElementById('csvFileInput');
+        const columnSelectGroup = document.getElementById('columnSelectGroup');
+        const columnSelect = document.getElementById('columnSelect');
+        const valueSelectGroup = document.getElementById('valueSelectGroup');
+        const valueSelect = document.getElementById('valueSelect');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+
+        // 1. Handle Upload & Parsing File
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    globalData = results.data;
+                    filteredData = results.data;
+                    headers = results.meta.fields;
+
+                    setupColumnSelect();
+                    renderTable(filteredData);
+
+                    // Aktifkan tombol download
+                    downloadBtn.disabled = false;
+                }
+            });
+        });
+
+        // 2. Setup Dropdown Kolom
+        function setupColumnSelect() {
+            columnSelect.innerHTML = '<option value="">-- Semua Kolom --</option>';
+            headers.forEach(header => {
+                const option = document.createElement('option');
+                option.value = header;
+                option.textContent = header;
+                columnSelect.appendChild(option);
+            });
+
+            columnSelectGroup.style.display = 'flex';
+            valueSelectGroup.style.display = 'none'; // Sembunyikan nilai filter sampai kolom dipilih
+
+            // Reset filter
+            columnSelect.value = "";
+            valueSelect.value = "";
+        }
+
+        // 3. Handle Perubahan Kolom (Mendapatkan Nilai Unik)
+        columnSelect.addEventListener('change', (e) => {
+            const selectedColumn = e.target.value;
+
+            if (!selectedColumn) {
+                valueSelectGroup.style.display = 'none';
+                filteredData = globalData;
+                renderTable(filteredData);
+                return;
+            }
+
+            // Ekstrak nilai unik menggunakan Set
+            const uniqueValues = new Set();
+            globalData.forEach(row => {
+                if (row[selectedColumn] !== undefined && row[selectedColumn] !== "") {
+                    uniqueValues.add(row[selectedColumn]);
+                }
+            });
+
+            // Populate Dropdown Nilai
+            valueSelect.innerHTML = '<option value="">-- Semua Nilai --</option>';
+            Array.from(uniqueValues).sort().forEach(val => {
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = val;
+                valueSelect.appendChild(option);
+            });
+
+            valueSelectGroup.style.display = 'flex';
+
+            // Terapkan filter saat ini (kembalikan ke 'Semua Nilai')
+            valueSelect.value = "";
+            filteredData = globalData;
+            renderTable(filteredData);
+        });
+
+        // 4. Handle Perubahan Filter Nilai
+        valueSelect.addEventListener('change', (e) => {
+            const selectedColumn = columnSelect.value;
+            const selectedValue = e.target.value;
+
+            if (!selectedValue) {
+                filteredData = globalData;
+            } else {
+                filteredData = globalData.filter(row => row[selectedColumn] === selectedValue);
+            }
+
+            renderTable(filteredData);
+        });
+
+        // 5. Render Tabel HTML
+        function renderTable(dataToRender) {
+            // Render Header
+            tableHeader.innerHTML = '';
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                tableHeader.appendChild(th);
+            });
+
+            // Render Body (Batasi 100 baris agar browser tidak lag jika file sangat besar)
+            tableBody.innerHTML = '';
+            if (dataToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="${headers.length}" class="empty-state">Tidak ada data yang cocok dengan filter.</td></tr>`;
+                return;
+            }
+
+            const limit = Math.min(dataToRender.length, 100);
+            for (let i = 0; i < limit; i++) {
+                const row = dataToRender[i];
+                const tr = document.createElement('tr');
+
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header];
+                    tr.appendChild(td);
+                });
+
+                tableBody.appendChild(tr);
+            }
+
+            // Pesan jika data terpotong
+            if (dataToRender.length > 100) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="${headers.length}" class="empty-state">Menampilkan 100 baris pertama dari total ${dataToRender.length} baris...</td>`;
+                tableBody.appendChild(tr);
+            }
+        }
+
+        // 6. Ekspor / Download CSV
+        downloadBtn.addEventListener('click', () => {
+            if (filteredData.length === 0) {
+                alert("Tidak ada data untuk didownload.");
+                return;
+            }
+
+            // Ubah array JSON kembali ke string CSV menggunakan PapaParse
+            const csvString = Papa.unparse(filteredData);
+
+            // Buat Blob file
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+
+            // Proses trigger download (buat link temporary)
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'data_filtered.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+</body>
+
+</html>

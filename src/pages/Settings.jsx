@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
+import logoFace from '../assets/images/logo_face.png';
 import {
   MODE_CONFIG,
   DAY_KEYS,
@@ -90,8 +91,21 @@ export default function Settings() {
     <div className="page animate-fade">
       <div className="container" style={{ maxWidth: 760, paddingTop: 40 }}>
 
-        <h1 className="title-lg">⚙️ Pengaturan</h1>
-        <p className="text-muted mt-8">Kelola preferensi umum akun belajarmu.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 44, height: 44,
+            borderRadius: 10,
+            background: 'linear-gradient(135deg, var(--sky-500), var(--sky-600))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(14,165,233,0.25)'
+          }}>
+            <img src={logoFace} alt="OTODU" style={{ width: 26, height: 26, objectFit: 'contain' }} />
+          </div>
+          <div>
+            <h1 className="title-lg">⚙️ Pengaturan</h1>
+            <p className="text-muted mt-8">Kelola preferensi umum akun belajarmu.</p>
+          </div>
+        </div>
 
         <div className="card mt-24">
           <h2 className="title-sm mb-16">👤 Profil</h2>

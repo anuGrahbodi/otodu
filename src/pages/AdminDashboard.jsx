@@ -4,6 +4,8 @@ import { useStore } from '../store/useStore';
 import { SUBJECTS } from '../data/questions';
 import { QUESTION_TYPES, SUBTESTS, getQuestionTypeConfig } from '../data/questionTypes';
 import QuestionForm from '../components/admin/QuestionForm';
+import logoFull from '../assets/images/logo_full.png';
+import logoFace from '../assets/images/logo_face.png';
 import {
   getQuestions, addQuestion, updateQuestion, deleteQuestion,
   getCommunityStats, saveCommunityStats,
@@ -729,7 +731,16 @@ export default function AdminDashboard() {
       <div className="page animate-fade flex items-center justify-center">
         <div className="card" style={{ maxWidth: 400, width: '100%', marginTop: '10vh' }}>
           <div className="text-center mb-24">
-            <div style={{ fontSize: 48, marginBottom: 12 }}>🔒</div>
+            <div style={{
+              width: 64, height: 64,
+              borderRadius: 16,
+              background: 'linear-gradient(135deg, var(--sky-500), var(--sky-600))',
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 8px 24px rgba(14,165,233,0.3)',
+              marginBottom: 20
+            }}>
+              <img src={logoFace} alt="OTODU" style={{ width: 40, height: 40, objectFit: 'contain' }} />
+            </div>
             <h2 className="title-md">Akses Admin</h2>
             <p className="text-muted text-sm mt-4">Silakan login untuk mengelola OTODUv3.</p>
           </div>
@@ -759,9 +770,12 @@ export default function AdminDashboard() {
 
         {/* Header */}
         <div className="card-sky card" style={{ padding: '24px 32px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 className="title-lg" style={{ color: 'white', letterSpacing: '-0.5px' }}>⚙️ Admin Panel</h1>
-            <p style={{ opacity: 0.8, marginTop: 4 }}>Kelola konten, pengguna, dan pengaturan sistem OTODUv3.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <img src={logoFull} alt="OTODU" style={{ height: 36, objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+            <div>
+              <h1 className="title-lg" style={{ color: 'white', letterSpacing: '-0.5px' }}>⚙️ Admin Panel</h1>
+              <p style={{ opacity: 0.8, marginTop: 4 }}>Kelola konten, pengguna, dan pengaturan sistem OTODUv3.</p>
+            </div>
           </div>
           <button onClick={() => { logoutAdmin(); navigate('/dashboard'); }} className="btn" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
             Logout Admin

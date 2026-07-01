@@ -5,6 +5,7 @@ import MetakognitifPopup from '../components/MetakognitifPopup';
 import QuestionInput from '../components/exam/QuestionInput';
 import { SUBJECTS } from '../data/questions';
 import { getQuestionTypeConfig, isAnswered } from '../data/questionTypes';
+import logoFace from '../assets/images/logo_face.png';
 
 export default function UjianEngine() {
   const { sessionId } = useParams();
@@ -121,13 +122,24 @@ export default function UjianEngine() {
         gap: 16,
         flexShrink: 0,
       }}>
-        <div>
-          <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-            SESI UJIAN
-          </p>
-          <p style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--sky-700)', fontWeight: 700 }}>
-            {draft.code}
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width: 32, height: 32,
+            borderRadius: 8,
+            background: 'linear-gradient(135deg, var(--sky-500), var(--sky-600))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(14,165,233,0.2)'
+          }}>
+            <img src={logoFace} alt="OTODU" style={{ width: 18, height: 18, objectFit: 'contain' }} />
+          </div>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+              SESI UJIAN
+            </p>
+            <p style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--sky-700)', fontWeight: 700 }}>
+              {draft.code}
+            </p>
+          </div>
         </div>
 
         <div style={{ flex: 1, maxWidth: 300 }}>
